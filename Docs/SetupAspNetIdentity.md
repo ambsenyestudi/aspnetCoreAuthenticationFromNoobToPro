@@ -8,6 +8,8 @@ You need the following nugets:
 
 You only need a dbcontext
 <hr/>
+
 You must implement:
+
 - UserStore 
 - RoleStore
