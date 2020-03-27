@@ -2,9 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Ambseny.WebAplication.Data;
+using Ambseny.WebAplication.Data.User;
+using Ambseny.WebAplication.Models.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -24,6 +29,14 @@ namespace Ambseny.WebAplication
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddDbContext<EasyUserDbContext>(options =>
+                options
+                .UseInMemoryDatabase("Memory")
+            //.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+            );
+            services.AddIdentity<EasyUser, IdentityRole>()
+                .AddUserStore<EasyUserStore>()
+                .AddRoleStore<EasyRoleStore>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
