@@ -32,3 +32,8 @@ Let's start simple.
 > On this first section we are only going to use de @inject attribute on a view to hide some sections.
 
 First let's show [Authentication in our view](Docs/AuthenticationOnYourViews.md)
+
+### Dummy Sign-in
+
+No just to feel the flow let's produe a dummy sign-in process.
+[DummySing In](Docs/SignIn.md)
