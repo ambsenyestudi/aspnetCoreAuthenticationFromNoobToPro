@@ -8,6 +8,7 @@
     - [Authenticate your views](#Authenticate-your-views)
     - [Dummy SignIn](#Dummy-SignIn)
     - [Register Users](#Register-Users)
+    - [Signout](#Signout)
 
 ## Preface
 This project is meant be a step by step form securing your web applications to using open-id for your suite of apps
