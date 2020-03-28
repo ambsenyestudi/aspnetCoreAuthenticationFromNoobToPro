@@ -3,6 +3,7 @@ using Ambseny.WebAplication.Models.Users;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,6 +23,14 @@ namespace Ambseny.WebAplication.Data.User
             {
                 user.Id = Guid.NewGuid().ToString();
                 dbContext.Users.Add(user);
+                var basicClaim = new UserClaim
+                {
+                    Id = Guid.NewGuid(),
+                    ClaimType = ClaimTypes.Sid,
+                    ClaimValue = user.Id,
+                    UserId = user.Id
+                };
+                dbContext.UserClaims.Add(basicClaim);
                 var result = await dbContext.SaveChangesAsync();
                 if (result > 0)
                 {
@@ -69,7 +78,7 @@ namespace Ambseny.WebAplication.Data.User
 
         public Task<EasyUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken) => 
             Task.Factory.StartNew(() => dbContext.Users
-                .Where(x => x.Name == normalizedUserName)
+                .Where(x => x.Name.ToUpper() == normalizedUserName.ToUpper())
                 .FirstOrDefault());
 
         public Task<string> GetNormalizedUserNameAsync(EasyUser user, CancellationToken cancellationToken)

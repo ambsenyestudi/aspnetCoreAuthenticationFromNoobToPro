@@ -40,7 +40,8 @@ namespace Ambseny.WebAplication
             services.AddIdentity<EasyUser, IdentityRole>()
                 .AddUserStore<EasyUserStore>()
                 .AddRoleStore<EasyRoleStore>()
-                .AddSignInManager<EasyUserSignInManager>();
+                .AddSignInManager<EasyUserSignInManager>()
+                .AddClaimsPrincipalFactory<EasyUserClaimsPrincipalFactory>();
 
             services.ConfigureApplicationCookie(config => {
                 config.Cookie.Name = "IdentityAutheticate.Cookie";

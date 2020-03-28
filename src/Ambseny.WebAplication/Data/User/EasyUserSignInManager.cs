@@ -32,6 +32,8 @@ namespace Ambseny.WebAplication.Data.User
             {
                 if (storedUser.Password == password)
                 {
+                    user = storedUser;
+                    
                     return SignInResult.Success;
                 }
             }

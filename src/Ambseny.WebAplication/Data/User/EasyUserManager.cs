@@ -29,5 +29,9 @@ namespace Ambseny.WebAplication.Data.User
         {
             return Store.CreateAsync((EasyUser)user, new CancellationToken());
         }
+        public override Task<EasyUser> FindByNameAsync(string userName)
+        {
+            return Store.FindByNameAsync(userName, new CancellationToken());
+        }
     }
 }
