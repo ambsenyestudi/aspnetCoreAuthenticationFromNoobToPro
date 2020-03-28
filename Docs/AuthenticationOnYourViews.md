@@ -37,7 +37,8 @@ using the following attribute to hide/show parts of the view.
 ```
 
 ### Setup and configuration
-To have access to this module we must add Identity and dbContext using the very convenient extension methods ready for it  at Startup.cs at ConfigureServices method
+To have access to this module we must add Identity and dbContext using the very convenient extension methods ready for it  at [Startup.cs](/src/Ambseny.WebAplication/Startup.cs) 
+at ConfigureServices method
 ```
 public void ConfigureServices(IServiceCollection services)
 {
