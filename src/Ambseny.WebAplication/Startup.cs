@@ -32,7 +32,7 @@ namespace Ambseny.WebAplication
             services.AddDbContext<EasyUserDbContext>(options =>
                 options
                 .UseInMemoryDatabase("Memory")
-            //.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+                //.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
             services.AddIdentity<EasyUser, IdentityRole>()
                 .AddUserStore<EasyUserStore>()
