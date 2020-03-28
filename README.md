@@ -38,3 +38,8 @@ First let's show [Authentication in our view](Docs/AuthenticationOnYourViews.md)
 
 No just to feel the flow let's produe a dummy sign-in process.
 [DummySing In](Docs/SignIn.md)
+
+### Register Users
+
+Let's add the functionality of registering users to our aplication
+[Register users](Docs/Registration.md)

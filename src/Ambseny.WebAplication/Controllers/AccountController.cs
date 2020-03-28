@@ -23,7 +23,18 @@ namespace Ambseny.WebAplication.Controllers
         {
             await signInManager.SignInAsync(user, false);
             return Redirect("/Home");
-            //return View(new EasyUser());
+        }
+
+        [HttpGet]
+        public IActionResult Register()
+        {
+            return View(new EasyUser());
+        }
+        [HttpPost]
+        public async Task<IActionResult> Register(EasyUser user)
+        {
+            await signInManager.SignInAsync(user, false);
+            return Redirect("/Home");
         }
     }
 }
