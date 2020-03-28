@@ -37,7 +37,8 @@
             </div>
             @if (SignInManager.IsSignedIn(User))
             {
-                <span class="navbar-text">@User.Identity.Name</span>
+                <div class="d-inline p-2 text-dark">@User.Identity.Name</div>
+                <div class="d-inline"><a class="btn btn-dark" asp-area="" asp-controller="Account" asp-action="Logout">Log out</a></div>
             }
             else
             {

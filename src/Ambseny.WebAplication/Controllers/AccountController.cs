@@ -62,5 +62,12 @@ namespace Ambseny.WebAplication.Controllers
             }
             return View(user);
         }
+
+        [HttpGet]
+        public IActionResult Logout()
+        {
+            signInManager.SignOutAsync();
+            return Redirect("/Home");
+        }
     }
 }
