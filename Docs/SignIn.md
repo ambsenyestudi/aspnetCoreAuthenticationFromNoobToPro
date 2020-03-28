@@ -30,7 +30,7 @@ We will add some tell at layout that we are logged in and we will add cookies, s
 
 ### Configure you project
 
-At [Startup.cs](/src/Ambseny.WebAplication/Startup) we need to configure two services explained later on this document as transients and add the cookie authentication at ConfigureServices
+At [Startup.cs](/src/Ambseny.WebAplication/Startup.cs) we need to configure two services explained later on this document as transients and add the cookie authentication at ConfigureServices
 ```
 services.AddTransient<EasyUserSignInManager>();
 services.AddTransient<EasyUserManager>();
@@ -56,8 +56,8 @@ app.UseAuthorization();
 
 We will create an account controller with a login method.
 In order to keep our identity, we need two more custom classes to fi our user:
-- [EasyUserManager](/src/Ambseny.WebAplication/Data/User/EasyUserManager)
-- [EasyUserSignInManager](/src/Ambseny.WebAplication/Data/User/EasyUserSignInManager)
+- [EasyUserManager](/src/Ambseny.WebAplication/Data/User/EasyUserManager.cs)
+- [EasyUserSignInManager](/src/Ambseny.WebAplication/Data/User/EasyUserSignInManager.cs)
 
 We need to inject EasyUserSignInManager dependency at controller the constructor
 ```
@@ -91,7 +91,7 @@ This is the class we need in order to have sign in privileges on the cookie. It 
 
 We implemented our own type EasyUserSignInManager so we can sign in our EasyUser.
 
-Identity needs to be able to recognize a user, so we need to implement the following methods at [EasyUserStore](/src/Ambseny.WebAplication/Data/User/EasyUserStore):
+Identity needs to be able to recognize a user, so we need to implement the following methods at [EasyUserStore](/src/Ambseny.WebAplication/Data/User/EasyUserStore.cs):
 ```
 public Task<string> GetUserIdAsync(EasyUser user, CancellationToken cancellationToken) => 
     Task.FromResult(Guid.NewGuid().ToString());

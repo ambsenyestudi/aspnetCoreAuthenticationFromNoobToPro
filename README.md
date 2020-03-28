@@ -6,6 +6,7 @@
 - [Introduction](#Introduction)
 - [Project](#Project)
     - [Authenticate your views](#Authenticate-your-views)
+    - [Dummy SignIn](#Dummy-SignIn)
 
 ## Preface
 This project is meant be a step by step form securing your web applications to using open-id for your suite of apps
@@ -33,7 +34,7 @@ Let's start simple.
 
 First let's show [Authentication in our view](Docs/AuthenticationOnYourViews.md)
 
-### Dummy Sign-in
+### Dummy SignIn
 
 No just to feel the flow let's produe a dummy sign-in process.
 [DummySing In](Docs/SignIn.md)
