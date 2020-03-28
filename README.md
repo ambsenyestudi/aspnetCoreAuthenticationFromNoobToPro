@@ -44,3 +44,23 @@ No just to feel the flow let's produe a dummy sign-in process.
 
 Let's add the functionality of registering users to our aplication
 [Register users](Docs/Registration.md)
+
+### Signout
+
+Adding a link/button to Layout beside the user name. 
+```
+@if (SignInManager.IsSignedIn(User))
+{
+    <div class="d-inline p-2 text-dark">@User.Identity.Name</div>
+    <div class="d-inline"><a class="btn btn-dark" asp-area="" asp-controller="Account" asp-action="Logout">Log out</a></div>
+}
+```
+At Account controller redirecting to home after using singinManger to singOut
+```
+[HttpGet]
+public IActionResult Logout()
+{
+    signInManager.SignOutAsync();
+    return Redirect("/Home");
+}
+```
