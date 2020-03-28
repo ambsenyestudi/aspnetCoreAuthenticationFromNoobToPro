@@ -1,12 +1,11 @@
 # Asp net core authentication from noob to pro
-===
 
 ## Table of content
 
 - [Preface](#Preface)
 - [Introduction](#Introduction)
 - [Project](#Project)
-	-[Authenticate your views](#Authenticate-your-views)
+    - [Authenticate your views](#Authenticate-your-views)
 
 ## Preface
 This project is meant be a steap by steap form securing your web applicatons to using open-id for your suite of apps
@@ -18,7 +17,6 @@ First is first let's talk about Asp net core Identity
 The very first step is [Introduction to Identity on ASP.NET Core](https://docs.microsoft.com/en-us/aspnet/core/security/authentication/identity?view=aspnetcore-3.1&tabs=visual-studio) to get you started. And you can get a fearly good sample at [Asp net core Identity samples for mvc](https://github.com/dotnet/aspnetcore/tree/master/src/Identity/samples/IdentitySample.Mvc)
 
 ## Project
----
 
 These projects are intended to start very simple and add things progresively so anyone can follow along.
 
