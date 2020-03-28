@@ -26,5 +26,5 @@ Now create users using user store
 
 ### CreateEasyUser Model
 
-Add a new [model](/src/Ambseny.WebAplication/Models/Users/CreatEasyUser.cs)., we need a confirm password validation for our Register view
+Add a new [model](/src/Ambseny.WebAplication/Models/Users/CreateEasyUser.cs)., we need a confirm password validation for our Register view
 
