@@ -13,13 +13,29 @@ namespace Ambseny.WebAplication.Data.User
 {
     public class EasyUserSignInManager : SignInManager<EasyUser>
     {
-        public EasyUserSignInManager(UserManager<EasyUser> userManager, IHttpContextAccessor contextAccessor, IUserClaimsPrincipalFactory<EasyUser> claimsFactory, IOptions<IdentityOptions> optionsAccessor, ILogger<SignInManager<EasyUser>> logger, IAuthenticationSchemeProvider schemes, IUserConfirmation<EasyUser> confirmation) : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes, confirmation)
+        public EasyUserSignInManager(UserManager<EasyUser> userManager, 
+            IHttpContextAccessor contextAccessor, 
+            IUserClaimsPrincipalFactory<EasyUser> claimsFactory, 
+            IOptions<IdentityOptions> optionsAccessor, 
+            ILogger<SignInManager<EasyUser>> logger, 
+            IAuthenticationSchemeProvider schemes, 
+            IUserConfirmation<EasyUser> confirmation) : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes, confirmation)
         {
         }
-        public override Task SignInAsync(EasyUser user, bool isPersistent, string authenticationMethod = null)
+        public override Task SignInAsync(EasyUser user, bool isPersistent, string authenticationMethod = null) =>
+            base.SignInAsync(user, isPersistent, authenticationMethod);
+
+        public async override Task<SignInResult> PasswordSignInAsync(EasyUser user, string password, bool isPersistent, bool lockoutOnFailure)
         {
-            //Todo some sort of revision here
-            return base.SignInAsync(user, isPersistent, authenticationMethod);
+            var storedUser = await UserManager.FindByNameAsync(user.Name);
+            if (storedUser != null)
+            {
+                if (storedUser.Password == password)
+                {
+                    return SignInResult.Success;
+                }
+            }
+            return SignInResult.Failed;
         }
     }
 }
