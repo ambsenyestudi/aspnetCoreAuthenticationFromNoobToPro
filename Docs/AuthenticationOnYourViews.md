@@ -30,7 +30,8 @@ As mentioned in [Setup Identity on ASP.NET Core](Docs/SetupAspNetIdentity.md) we
 
 ### Views
 
-Instead of writing a new *partial view* we modified Views/Shared/_Layout.cshtml using the following attribute to hide/show parts of the view.
+Instead of writing a new *partial view* we modified [Views/Shared/_Layout.cshtml](/aspnetCoreAuthenticationFromNoobToPro/blob/00_EasyUser/src/Ambseny.WebAplication/Views/Shared/_Layout.cshtml) 
+using the following attribute to hide/show parts of the view.
 ```
 @inject SignInManager<EasyUser> SignInManager
 ```
