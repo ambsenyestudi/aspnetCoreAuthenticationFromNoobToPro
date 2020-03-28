@@ -27,7 +27,6 @@ namespace Ambseny.WebAplication.Data.User
         }
         public override Task<IdentityResult> CreateAsync(EasyUser user)
         {
-            //base.CreateAsync(user);
             return Store.CreateAsync((EasyUser)user, new CancellationToken());
         }
     }
