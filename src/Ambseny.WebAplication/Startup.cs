@@ -34,9 +34,20 @@ namespace Ambseny.WebAplication
                 .UseInMemoryDatabase("Memory")
                 //.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
             );
+
+            services.AddTransient<EasyUserSignInManager>();
+            services.AddTransient<EasyUserManager>();
             services.AddIdentity<EasyUser, IdentityRole>()
                 .AddUserStore<EasyUserStore>()
-                .AddRoleStore<EasyRoleStore>();
+                .AddRoleStore<EasyRoleStore>()
+                .AddSignInManager<EasyUserSignInManager>();
+
+            services.ConfigureApplicationCookie(config => {
+                config.Cookie.Name = "IdentityAutheticate.Cookie";
+                config.LoginPath = "/Account/Login";
+            });
+
+            services.AddAuthentication();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -57,6 +68,7 @@ namespace Ambseny.WebAplication
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

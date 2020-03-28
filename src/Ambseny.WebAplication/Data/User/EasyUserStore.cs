@@ -1,6 +1,7 @@
 
 using Ambseny.WebAplication.Models.Users;
 using Microsoft.AspNetCore.Identity;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -38,15 +39,12 @@ namespace Ambseny.WebAplication.Data.User
             throw new System.NotImplementedException();
         }
 
-        public Task<string> GetUserIdAsync(EasyUser user, CancellationToken cancellationToken)
-        {
-            throw new System.NotImplementedException();
-        }
+        public Task<string> GetUserIdAsync(EasyUser user, CancellationToken cancellationToken) => 
+            Task.FromResult(Guid.NewGuid().ToString());
+        
 
-        public Task<string> GetUserNameAsync(EasyUser user, CancellationToken cancellationToken)
-        {
-            throw new System.NotImplementedException();
-        }
+        public Task<string> GetUserNameAsync(EasyUser user, CancellationToken cancellationToken) =>
+            Task.FromResult(user.Name);
 
         public Task SetNormalizedUserNameAsync(EasyUser user, string normalizedName, CancellationToken cancellationToken)
         {
