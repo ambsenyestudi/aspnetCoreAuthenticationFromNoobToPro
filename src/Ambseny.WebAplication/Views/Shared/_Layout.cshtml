@@ -29,7 +29,7 @@
                         </li>
                         @if (SignInManager.IsSignedIn(User))
                         {
-                            @if ((await AuthorizationService.AuthorizeAsync(User, "UserEditor")).Succeeded)
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "UserReviewer")).Succeeded)
                             {
                                 <li class="nav-item">
                                     <a class="nav-link text-dark" asp-area="" asp-controller="Manage" asp-action="Index" >Manage Users</a>
