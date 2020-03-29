@@ -37,7 +37,7 @@ In order to avoid the constants in the code base smell I added two enums at [Use
 
 ### SignIn manager errata
 
-Disclaimer from the las section we modified the [EasyUserSignInManager](/src/Ambseny.WebAplication/Models/Users/UserClaim.cs) **PasswordSignInAsync** method to call 
+Disclaimer from the las section we modified the [EasyUserSignInManager](/src/Ambseny.WebAplication/Models/Users/EasyUserSignInManager.cs) **PasswordSignInAsync** method to call 
 SignInAsync after checking the password or else our cookie wasn't updated with the new signin state.
 
 ### Profile 
