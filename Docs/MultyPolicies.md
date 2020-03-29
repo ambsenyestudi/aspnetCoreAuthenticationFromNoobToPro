@@ -4,11 +4,11 @@
 
 - [Preface](#Preface)
 - [Work done](#Work-done)
--   [Seeding](#Seeding)
--   [Policy setup](#Policy-setup)
--   [Claims update](#Claims-update)
--   [Profile](#Profile)
--   [Manage claims](#Manage-claims)
+    - [Seeding](#Seeding)
+    - [Policy setup](#Policy-setup)
+    - [Claims update](#Claims-update)
+    - [Profile](#Profile)
+    - [Manage claims](#Manage-claims)
 ## Preface
 
 As mentioned before, we now need at two more policies and seed to more users.
