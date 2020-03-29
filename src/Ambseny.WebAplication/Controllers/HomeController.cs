@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Ambseny.WebAplication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Ambseny.WebAplication.Models;
+using System.Diagnostics;
 
 namespace Ambseny.WebAplication.Controllers
 {
@@ -22,7 +19,7 @@ namespace Ambseny.WebAplication.Controllers
         {
             return View();
         }
-
+        [Authorize]
         public IActionResult Privacy()
         {
             return View();

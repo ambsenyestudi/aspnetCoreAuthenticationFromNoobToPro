@@ -22,8 +22,11 @@ namespace Ambseny.WebAplication.Data.User
             IUserConfirmation<EasyUser> confirmation) : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes, confirmation)
         {
         }
-        public override Task SignInAsync(EasyUser user, bool isPersistent, string authenticationMethod = null) =>
-            base.SignInAsync(user, isPersistent, authenticationMethod);
+        public async override Task SignInAsync(EasyUser user, bool isPersistent, string authenticationMethod = null)
+        {
+            await base.SignInAsync(user, isPersistent, authenticationMethod);
+            await UpdateContextUserAsync(Context, user); 
+        }
 
         public async override Task<SignInResult> PasswordSignInAsync(EasyUser user, string password, bool isPersistent, bool lockoutOnFailure)
         {
@@ -32,12 +35,15 @@ namespace Ambseny.WebAplication.Data.User
             {
                 if (storedUser.Password == password)
                 {
-                    user = storedUser;
-                    
+                    await UpdateContextUserAsync(Context, storedUser);
                     return SignInResult.Success;
                 }
             }
             return SignInResult.Failed;
+        }
+        private async Task UpdateContextUserAsync(HttpContext context, EasyUser user)
+        {
+            context.User = await ClaimsFactory.CreateAsync(user);
         }
     }
 }

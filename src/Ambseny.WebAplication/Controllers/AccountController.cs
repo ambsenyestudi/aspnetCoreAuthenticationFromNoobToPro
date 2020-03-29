@@ -29,8 +29,6 @@ namespace Ambseny.WebAplication.Controllers
             var signinResult = await signInManager.PasswordSignInAsync(user, user.Password, false, false);
             if (signinResult.Succeeded)
             {
-                var myClaims = await signInManager.CreateUserPrincipalAsync(user);
-                var claims = HttpContext.User.Claims;
                 return Redirect("/Home");
             }
             else
@@ -56,11 +54,8 @@ namespace Ambseny.WebAplication.Controllers
             if (creationResult.Succeeded)
             {
                 await signInManager.SignInAsync(user, false);
-                //this is a little dirty
+                
                 //next step https://docs.microsoft.com/en-us/aspnet/core/security/authorization/claims?view=aspnetcore-3.1
-                var principal = await signInManager.CreateUserPrincipalAsync(user);
-                HttpContext.User.AddIdentity(new ClaimsIdentity(principal.Claims));
-                var claims = HttpContext.User;
                 return Redirect("/Home");
             }
             else

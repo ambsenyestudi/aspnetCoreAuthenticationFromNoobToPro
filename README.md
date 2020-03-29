@@ -9,6 +9,7 @@
     - [Dummy SignIn](#Dummy-SignIn)
     - [Register Users](#Register-Users)
     - [Signout](#Signout)
+    - [Claims](#Claims)
 
 ## Preface
 This project is meant be a step by step form securing your web applications to using open-id for your suite of apps
@@ -65,3 +66,7 @@ public IActionResult Logout()
     return Redirect("/Home");
 }
 ```
+### Claims
+
+In oder to keep it undestandable we are just going to create a single extra claim for the claims principal and add the identity to the context
+[Claims](Docs/Claims.md)
