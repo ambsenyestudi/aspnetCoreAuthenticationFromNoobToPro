@@ -35,7 +35,7 @@ namespace Ambseny.WebAplication.Data.User
             {
                 if (storedUser.Password == password)
                 {
-                    await UpdateContextUserAsync(Context, storedUser);
+                    await SignInAsync(storedUser, isPersistent, null);
                     return SignInResult.Success;
                 }
             }

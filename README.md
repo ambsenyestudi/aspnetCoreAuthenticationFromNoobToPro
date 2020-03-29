@@ -10,6 +10,7 @@
     - [Register Users](#Register-Users)
     - [Signout](#Signout)
     - [Claims](#Claims)
+    - [Policies for our application](#Policies-for-our-application)
 
 ## Preface
 This project is meant be a step by step form securing your web applications to using open-id for your suite of apps
@@ -70,3 +71,28 @@ public IActionResult Logout()
 
 In oder to keep it undestandable we are just going to create a single extra claim for the claims principal and add the identity to the context
 [Claims](Docs/Claims.md)
+
+### Policies for our application
+
+Now that we have some undestanding of Authentication and authuorization let's humor our selves with some fake user requirements
+> After talking to our client we need the following features in our app
+> - Users must have some of the following User management claims:
+>     - None
+>     - Review (can read users and their user managment claims value)
+>     - Edit (can read and edit users and their user managment claims value)
+>     - Administrate (can read and edit users and their user managment claims value)
+> - All users including recentily registered can access to their profile
+
+### Policy access
+
+For our first sprint we will only have users with no privileges and users with review priviledges.
+[Policies](Docs/Policies.md)
+
+### More than one policy access simultaneously
+
+For this sprint we will have all user policies implemented
+[Multy Policies](Docs/MultyPolicies.md)
+
+
+
+

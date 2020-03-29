@@ -1,5 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using Ambseny.WebAplication.Models.Users
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 @inject SignInManager<EasyUser> SignInManager
 
 <!DOCTYPE html>
@@ -27,6 +29,15 @@
                         </li>
                         @if (SignInManager.IsSignedIn(User))
                         {
+                            @if ((await AuthorizationService.AuthorizeAsync(User, "UserReviewer")).Succeeded)
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="Manage" asp-action="Index" >Manage Users</a>
+                                </li>
+                            }
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Profile" asp-action="Index" >Profile</a>
+                            </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                             </li>
@@ -54,11 +65,11 @@
     </div>
     @if (SignInManager.IsSignedIn(User))
     {
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2020 - Ambseny.WebAplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+        <footer class="border-top footer text-muted">
+            <div class="container">
+                &copy; 2020 - Ambseny.WebAplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
     }
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

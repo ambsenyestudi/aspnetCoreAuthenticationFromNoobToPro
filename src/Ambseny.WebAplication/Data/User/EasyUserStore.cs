@@ -59,7 +59,7 @@ namespace Ambseny.WebAplication.Data.User
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         public Task<EasyUser> FindByIdAsync(string userId, CancellationToken cancellationToken) =>
@@ -67,8 +67,8 @@ namespace Ambseny.WebAplication.Data.User
             {
                 if (dbContext.Users.Any())
                 {
-                    var matches = dbContext.Users.Where(x => x.Id == userId);
-                    if (dbContext.Users.Any())
+                    var matches = dbContext.Users.Where(x => x.Id == userId).AsEnumerable();
+                    if (matches.Any())
                     {
                         return matches.First();
                     }

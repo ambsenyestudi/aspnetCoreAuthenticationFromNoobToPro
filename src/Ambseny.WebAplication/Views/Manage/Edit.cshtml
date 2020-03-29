@@ -1,0 +1,49 @@
+﻿@using Ambseny.WebAplication.Models.Users
+@model EasyUserProfile 
+
+@{
+    ViewData["Title"] = "Edit";
+}
+<div class="row">
+    <div class="d-inline p-2">
+        <h4>@Html.DisplayNameFor(model => model.Name)</h4>
+    </div>
+    <div class="d-inline p-2">
+        <h4>@Html.DisplayFor(model => model.Name)</h4>
+    </div>
+</div>
+<hr />
+<div class="row">
+    
+    <div class="col-md-6">
+        <form asp-action="Edit" method="post">
+            <input asp-for="Name" type="hidden" />
+            <dl class="row">
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.Id)
+                </dt>
+                <dd class="col-sm-10">
+                    <input asp-for="Id" type="hidden" />
+                    @Html.DisplayFor(model => model.Id)
+                </dd>
+                <dt class="col-sm-2">
+                    @Html.DisplayNameFor(model => model.ManageUserStatus)
+                </dt>
+                <dd class="col-sm-10">
+                    <select asp-for="ManageUserValue" asp-items="Html.GetEnumSelectList<AmbsenyManageUserClaims>()" class="form-control"></select>
+                </dd>
+            </dl>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
