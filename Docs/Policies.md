@@ -8,7 +8,7 @@
 -   [Claims update](#Claims-update)
 -   [SignIn manager errata](#SignIn-manager-errata)
 -   [Profile](#Profile)
--	[Solidify our code](# Solidify-our-code)
+-	[Solidify our code](#Solidify-our-code)
 -   [Manage claims](#Manage-claims)
 ## Preface
 
@@ -48,7 +48,7 @@ Now all our controller having will only have to consume these dependencies
 
 ### Manage claims
 
-Let's create a view that displays all users and their user manage status [ManageController.cs](/src/Ambseny.WebAplication/Controllers/ManageController.es). This view
+Let's create a view that displays all users and their user manage status [ManageController.cs](/src/Ambseny.WebAplication/Controllers/ManageController.cs). This view
 is only accessible to reviewers. 
 ```
 [Authorize(Policy = "UserReviewer")]
