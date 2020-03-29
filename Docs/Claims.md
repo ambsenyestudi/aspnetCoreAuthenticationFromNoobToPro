@@ -9,7 +9,8 @@
     - [User sigIn manager](#User-sigIn-manager)
     - [Custom claims](#Custom-claims)
     - [User store](#User-store)
-    - [Next] (#Next)
+    - [As a result] (#As-a-result)
+
 ## Preface
 
 Claims define what user is it's a simple claim type claim value pair for more info [Claim-based authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/claims?view=aspnetcore-3.1)
@@ -56,7 +57,17 @@ It's a simple claim type/value related to the user by id. To store it we just cr
 Now to ilustratre this silly example, every time we regisister a user, at [UserStore](/src/Ambseny.WebAplication/Data/User/EasyUserStore.cs) level, custom claim. 
 Our custom claims is a UserClaim that olds the a Sid Claim tat is stored at our dbContex, so when signing in we can get when creating our identity
 
-### Next
+### As a result
 
-Now that we are ready for more, let's manage some users
+Now for the first time we have an Autorized Privacy page, so we can se the configuration of the cookie we made a couple of secction ago at work. 
+```
+services.ConfigureApplicationCookie(config => {
+    config.Cookie.Name = "IdentityAutheticate.Cookie";
+    config.LoginPath = "/Account/Login";
+});
+```
+If you try to access via Url to privacy /Home/Privacy your will be redirected to our Login page 
+
+Next we will manage some user using policy access
+
 
