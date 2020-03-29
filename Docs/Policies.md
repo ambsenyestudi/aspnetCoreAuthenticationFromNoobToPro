@@ -5,6 +5,7 @@
 - [Preface](#Preface)
 - [Work done](#Work-done)
 -   [Seeding](#Seeding)
+-   [Policy setup](#Policy-setup)
 -   [Claims update](#Claims-update)
 -   [SignIn manager errata](#SignIn-manager-errata)
 -   [Profile](#Profile)
@@ -20,6 +21,12 @@ As mentioned before, we need at list one type of user with review privileges, gi
 
 To seed our reviewer named Bob, we just modified [Program.cs](/src/Ambseny.WebAplication/Program.cs) to add a Seed method that adds the default sid claim and adds a new one. 
 The new claim states that bob is a reviewer.
+
+### Policy setup
+
+We added to our Authorization configuration at [Startup.cs](/src/Ambseny.WebAplication/Startup.cs) configure two policies:
+- Minimal it's de default one that only asks for a sid claim
+- UserReviewer that for now only asks for the Review
 
 ### Claims update
 
