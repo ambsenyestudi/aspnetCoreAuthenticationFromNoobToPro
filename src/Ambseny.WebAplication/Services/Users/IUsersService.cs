@@ -6,8 +6,8 @@ namespace Ambseny.WebAplication.Services.Users
 {
     public interface IUsersService
     {
-        IEnumerable<EasyUserIdentity> GetUserIdentities();
-        EasyUserIdentity GetUserIdentity(string id);
+        IEnumerable<EasyUserProfile> GetAllUserProfile();
+        EasyUserProfile GetUserProfile(string sid);
         bool DeleteUser(string id);
         bool UpdateClaims(string id, Claim claim);
     }

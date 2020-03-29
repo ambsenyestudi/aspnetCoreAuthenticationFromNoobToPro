@@ -91,6 +91,8 @@ For our first sprint we will only have users with no privileges and users with r
 ### More than one policy access simultaneously
 
 For this sprint we will have all user policies implemented
+[Multy Policies](Docs/MultyPolicies.md)
+
 
 
 

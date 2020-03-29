@@ -1,5 +1,5 @@
 ﻿@using Ambseny.WebAplication.Models.Users
-@model EditEasyManageUser
+@model EasyUserProfile 
 
 @{
     ViewData["Title"] = "Edit";
@@ -27,10 +27,10 @@
                     @Html.DisplayFor(model => model.Id)
                 </dd>
                 <dt class="col-sm-2">
-                    @Html.DisplayNameFor(model => model.Identity)
+                    @Html.DisplayNameFor(model => model.ManageUserStatus)
                 </dt>
                 <dd class="col-sm-10">
-                    <select asp-for="Identity" asp-items="Html.GetEnumSelectList<AmbsenyManageUserClaims>()" class="form-control"></select>
+                    <select asp-for="ManageUserValue" asp-items="Html.GetEnumSelectList<AmbsenyManageUserClaims>()" class="form-control"></select>
                 </dd>
             </dl>
             <div class="form-group">
