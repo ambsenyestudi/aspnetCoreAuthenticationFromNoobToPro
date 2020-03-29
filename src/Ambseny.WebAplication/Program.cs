@@ -1,16 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Ambseny.WebAplication.Data;
-using Ambseny.WebAplication.Data.User;
 using Ambseny.WebAplication.Models.Users;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace Ambseny.WebAplication
 {
@@ -43,41 +38,16 @@ namespace Ambseny.WebAplication
 
         private static void Seed(EasyUserDbContext dbContext)
         {
-            var admin = new EasyUser
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "admin",
-                Password = "admin",
-            };
             var bob = new EasyUser
             {
                 Id = Guid.NewGuid().ToString(),
                 Name = "bob",
                 Password = "bob",
             };
-            var alice = new EasyUser
-            {
-                Id = Guid.NewGuid().ToString(),
-                Name = "alice",
-                Password = "alice",
-            };
-            dbContext.Users.AddRange(admin, alice, bob);
+            dbContext.Users.AddRange(bob);
             var claims = new List<UserClaim>
             {
-                new UserClaim
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = admin.Id,
-                    ClaimType = ClaimTypes.Sid,
-                    ClaimValue = admin.Id
-                },
-                new UserClaim
-                {
-                     Id = Guid.NewGuid(),
-                    UserId = admin.Id,
-                    ClaimType = AmbsenyClaimTypes.ManageUsers.ToString(),
-                    ClaimValue = AmbsenyManageUserClaims.Administrate.ToString()
-                },
+                
                 new UserClaim
                 {
                     Id = Guid.NewGuid(),
@@ -91,20 +61,6 @@ namespace Ambseny.WebAplication
                     UserId = bob.Id,
                     ClaimType = AmbsenyClaimTypes.ManageUsers.ToString(),
                     ClaimValue = AmbsenyManageUserClaims.Review.ToString()
-                },
-                new UserClaim
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = alice.Id,
-                    ClaimType = ClaimTypes.Sid,
-                    ClaimValue = alice.Id
-                },
-                new UserClaim
-                {
-                    Id = Guid.NewGuid(),
-                    UserId = alice.Id,
-                    ClaimType = AmbsenyClaimTypes.ManageUsers.ToString(),
-                    ClaimValue = AmbsenyManageUserClaims.Edit.ToString()
                 }
             };
             dbContext.UserClaims.AddRange(claims);

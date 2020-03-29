@@ -9,7 +9,7 @@ namespace Ambseny.WebAplication.Models.Users
     }
     public enum AmbsenyManageUserClaims
     {
-        None, Review, Edit, Administrate
+        None, Review
     }
     public class UserClaim
     {

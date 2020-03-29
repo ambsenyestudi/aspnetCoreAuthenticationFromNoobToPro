@@ -1,9 +1,9 @@
 ﻿using Ambseny.WebAplication.Data;
 using Ambseny.WebAplication.Models.Users;
 using Ambseny.WebAplication.Services.Claims;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 
 namespace Ambseny.WebAplication.Services.Users
 {
@@ -17,65 +17,41 @@ namespace Ambseny.WebAplication.Services.Users
             this.dbContext = dbContext;
             this.claimsService = claimsService;
         }
-        public EasyUserIdentity GetUserIdentity(string id)
-        {
-            if (TryGetUserById(id, out EasyUser user))
-            {
-                var result = ToUserIdentity(user);
-                return result;
-            }
-            return null;
-        }
-        public IEnumerable<EasyUserIdentity> GetUserIdentities() =>
-            dbContext.Users.AsEnumerable().Select(x => ToUserIdentity(x));
 
-        private EasyUserIdentity ToUserIdentity(EasyUser user)
+        public IEnumerable<EasyUserProfile> GetAllUserProfile()
         {
-            claimsService.TryGetClaimValueByUserId(user.Id, AmbsenyClaimTypes.ManageUsers.ToString(), out string claimValue);
-            return new EasyUserIdentity
+            var users = dbContext.Users.AsEnumerable();
+            return users.Select(x => ToUserProfile(x));
+        }
+
+        private EasyUserProfile ToUserProfile(EasyUser user)
+        {
+            var manageUserClaim = AmbsenyManageUserClaims.None;
+            if (claimsService.TryGetClaimByUserId(user.Id, AmbsenyClaimTypes.ManageUsers.ToString(), out UserClaim claim))
+            {
+                if (Enum.IsDefined(typeof(AmbsenyManageUserClaims), claim.ClaimValue))
+                {
+                    manageUserClaim = (AmbsenyManageUserClaims)Enum.Parse(typeof(AmbsenyManageUserClaims), claim.ClaimValue);
+                }
+            }
+            return new EasyUserProfile
             {
                 Id = user.Id,
-                Name = user.Name,
-                Identity = GetIdentityFromId(user.Id),
-                Claim = claimValue
+                ManageUserValue = manageUserClaim,
+                Name = user.Name
             };
         }
-        private string GetIdentityFromId(string id)
-        {
 
-            if (claimsService.TryGetClaimCollectionByUserId(id, out IEnumerable<UserClaim> claimCollection))
+        public EasyUserProfile GetUserProfile(string sid)
+        {
+            if(TryGetUserById(sid, out EasyUser user))
             {
-                var claimsList = claimCollection.ToList();
-                if (claimsList.Count > 1)
-                {
-                    return EasyUserIdenityType.Multiple.ToString();
-                }
-                return EasyUserIdenityType.Default.ToString();
+                return ToUserProfile(user);
             }
-            return EasyUserIdenityType.None.ToString();
+            return null;
+            
         }
 
-        public bool DeleteUser(string id)
-        {
-            if (TryGetUserById(id, out EasyUser user))
-            {
-                dbContext.Remove(user);
-                return dbContext.SaveChanges() > 0;
-            }
-            return false;
-        }
-
-        public bool UpdateClaims(string id, Claim claim)
-        {
-            if(claimsService.TryGetClaimByUserId(id, claim.Type, out UserClaim userClaim))
-            {
-                return claimsService.UpdateExistingClaim(id, claim);
-            }
-            else
-            {
-                return claimsService.CreateNewClaim(id, claim);
-            }
-        }
         public bool TryGetUserById(string id, out EasyUser user)
         {
             var matches = dbContext.Users.Where(x => x.Id == id);
@@ -90,6 +66,7 @@ namespace Ambseny.WebAplication.Services.Users
             }
             return success;
         }
+
         
     }
 }

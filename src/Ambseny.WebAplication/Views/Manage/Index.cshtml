@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Ambseny.WebAplication.Models.Users.EasyUserIdentity>
+﻿@model IEnumerable<Ambseny.WebAplication.Models.Users.EasyUserProfile>
 @using Microsoft.AspNetCore.Authorization
 @inject IAuthorizationService AuthorizationService
 @{
@@ -17,12 +17,8 @@
                 @Html.DisplayNameFor(model => model.Name)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Identity)
+                @Html.DisplayNameFor(model => model.ManageUserStatus)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Claim)
-            </th>
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -36,28 +32,14 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Identity)
+                    @Html.DisplayFor(modelItem => item.ManageUserStatus)
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.Claim)
-                </td>
-                <td>
-                    @if ((await AuthorizationService.AuthorizeAsync(User, "UserEditor")).Succeeded)
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "UserReviewer")).Succeeded)
                     {
-                    <div class="row">
-                        <div class="d-inline">
-                            @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                            @Html.ActionLink("Profile", "Index", "Profile", new { id = item.Id })
-                        </div>
-                        @if ((await AuthorizationService.AuthorizeAsync(User, "UserAdministrator")).Succeeded)
-                        {
-                            <div class="d-inline">
-                                | @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-                            </div>
-                        }
-                    </div>
+                        @Html.ActionLink("Profile", "Index", "Profile", new { id = item.Id })
                     }
-</td>
+                </td>
             </tr>
         }
     </tbody>

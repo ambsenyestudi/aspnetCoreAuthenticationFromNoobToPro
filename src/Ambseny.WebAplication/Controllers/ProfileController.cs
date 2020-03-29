@@ -15,11 +15,12 @@ namespace Ambseny.WebAplication.Controllers
         }
         public IActionResult Index(string id)
         {
-            if(string.IsNullOrWhiteSpace(id))
+            var sid = id;
+            if (string.IsNullOrWhiteSpace(sid))
             {
-                id = User.Claims.Where(x => x.Type == ClaimTypes.Sid).Select(x=>x.Value).FirstOrDefault();
+                sid = User.Claims.Where(x => x.Type == ClaimTypes.Sid).Select(x => x.Value).FirstOrDefault();
             }
-            var userIdentity = usersService.GetUserIdentity(id);
+            var userIdentity = usersService.GetUserProfile(sid);
             return View(userIdentity);
         }
     }

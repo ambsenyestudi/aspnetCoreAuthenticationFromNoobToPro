@@ -59,18 +59,9 @@ namespace Ambseny.WebAplication
                 options.AddPolicy("Minimal", policy => policy.RequireClaim(ClaimTypes.Sid));
                 options.AddPolicy("UserReviewer", policy => 
                     policy.RequireClaim(AmbsenyClaimTypes.ManageUsers.ToString(), 
-                        AmbsenyManageUserClaims.Review.ToString(),
-                        AmbsenyManageUserClaims.Edit.ToString(),
-                        AmbsenyManageUserClaims.Administrate.ToString()
+                        AmbsenyManageUserClaims.Review.ToString()
                     )
                 );
-                options.AddPolicy("UserEditor", policy => 
-                    policy.RequireClaim(AmbsenyClaimTypes.ManageUsers.ToString(),
-                        AmbsenyManageUserClaims.Edit.ToString(),
-                        AmbsenyManageUserClaims.Administrate.ToString()
-                   )
-                );
-                options.AddPolicy("UserAdministrator", policy => policy.RequireClaim(AmbsenyClaimTypes.ManageUsers.ToString(), AmbsenyManageUserClaims.Administrate.ToString()));
             });
         }
 
