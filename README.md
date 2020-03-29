@@ -85,7 +85,8 @@ Now that we have some undestanding of Authentication and authuorization let's hu
 
 ### Policy access
 
-For our first sprint we will only have users with no privileges and users with review privileges.
+For our first sprint we will only have users with no privileges and users with review priviledges.
+[Policies](Docs/Policies.md)
 
 ### More than one policy access simultaneously
 
