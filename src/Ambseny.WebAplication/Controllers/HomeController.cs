@@ -17,6 +17,7 @@ namespace Ambseny.WebAplication.Controllers
 
         public IActionResult Index()
         {
+            var claims = HttpContext.User;
             return View();
         }
         [Authorize]

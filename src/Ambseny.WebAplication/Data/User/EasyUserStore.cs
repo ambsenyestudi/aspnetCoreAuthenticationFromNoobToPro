@@ -59,7 +59,7 @@ namespace Ambseny.WebAplication.Data.User
 
         public void Dispose()
         {
-            throw new System.NotImplementedException();
+            //throw new System.NotImplementedException();
         }
 
         public Task<EasyUser> FindByIdAsync(string userId, CancellationToken cancellationToken) =>

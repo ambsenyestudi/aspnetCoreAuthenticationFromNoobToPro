@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Ambseny.WebAplication.Data;
 using Ambseny.WebAplication.Data.User;
 using Ambseny.WebAplication.Models.Users;
+using Ambseny.WebAplication.Services.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -37,6 +39,7 @@ namespace Ambseny.WebAplication
 
             services.AddTransient<EasyUserSignInManager>();
             services.AddTransient<EasyUserManager>();
+            services.AddTransient<IUsersService, UsersService>();
             services.AddIdentity<EasyUser, IdentityRole>()
                 .AddUserStore<EasyUserStore>()
                 .AddRoleStore<EasyRoleStore>()
@@ -49,6 +52,24 @@ namespace Ambseny.WebAplication
             });
 
             services.AddAuthentication();
+            services.AddAuthorization(options =>
+            {
+                options.AddPolicy("Minimal", policy => policy.RequireClaim(ClaimTypes.Sid));
+                options.AddPolicy("UserReviewer", policy => 
+                    policy.RequireClaim(AmbsenyClaimTypes.ManageUsers.ToString(), 
+                        AmbsenyManageUserClaims.Review.ToString(),
+                        AmbsenyManageUserClaims.Edit.ToString(),
+                        AmbsenyManageUserClaims.Administrate.ToString()
+                    )
+                );
+                options.AddPolicy("UserEditor", policy => 
+                    policy.RequireClaim(AmbsenyClaimTypes.ManageUsers.ToString(),
+                        AmbsenyManageUserClaims.Edit.ToString(),
+                        AmbsenyManageUserClaims.Administrate.ToString()
+                   )
+                );
+                options.AddPolicy("UserAdministrator", policy => policy.RequireClaim(AmbsenyClaimTypes.ManageUsers.ToString(), AmbsenyManageUserClaims.Administrate.ToString()));
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

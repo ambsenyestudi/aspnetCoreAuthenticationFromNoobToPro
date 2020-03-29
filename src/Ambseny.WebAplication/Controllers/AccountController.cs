@@ -29,6 +29,7 @@ namespace Ambseny.WebAplication.Controllers
             var signinResult = await signInManager.PasswordSignInAsync(user, user.Password, false, false);
             if (signinResult.Succeeded)
             {
+                var claims = HttpContext.User;
                 return Redirect("/Home");
             }
             else
