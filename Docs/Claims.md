@@ -15,9 +15,9 @@
 
 Claims define what user is it's a simple claim type claim value pair for more info [Claim-based authorization](https://docs.microsoft.com/en-us/aspnet/core/security/authorization/claims?view=aspnetcore-3.1)
 > For teaching purpuses on this section:
-> -We only create useless claims (through a ClaimsFactory)
-> -Add Athorize Atributte to the Privacy() metod on (HomeController)(/src/Controllers/HomeController.cs)
-> -Assign claims to the HttpContext
+> - We only create useless claims (through a ClaimsFactory)
+> - Add Athorize Atributte to the Privacy() metod on (HomeController)(/src/Controllers/HomeController.cs)
+> - Assign claims to the HttpContext
 
 ## Work done
 
