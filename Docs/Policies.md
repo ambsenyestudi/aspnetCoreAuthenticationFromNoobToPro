@@ -12,7 +12,8 @@
 -   [Manage claims](#Manage-claims)
 ## Preface
 
-As mentioned before we need at list one type of user with review privilges, given that we use in memory database for now, we need to seed said user every time the applicaiton starts.
+As mentioned before, we need at list one type of user with review privileges, given that we use in memory database for now, we need to seed said user every time the application starts.
+
 ## Work done
 
 ### Seeding
@@ -28,14 +29,14 @@ In order to avoid the constants in the code base smell I added two enums at [Use
 
 ### SignIn manager errata
 
-Disclaimer from the las section we modifies the [EasyUserSignInManager](/src/Ambseny.WebAplication/Models/Users/UserClaim.cs) **PasswordSignInAsync** method to call 
+Disclaimer from the las section we modified the [EasyUserSignInManager](/src/Ambseny.WebAplication/Models/Users/UserClaim.cs) **PasswordSignInAsync** method to call 
 SignInAsync after checking the password or else our cookie wasn't updated with the new signin state.
 
 ### Profile 
 
-As stated in the requierements for this section, we need all user to be able to see their info on a profile view, so lets create it.
+As stated in the requirements for this section, we need all user to be able to see their info on a profile view, so let’s create it.
 > Using our default claim (Sid) we can get the user profile no problem.
-But anyway as we will use it this a detail page as well se set the option of passing an id of the profile detail.
+But since we will use it this a detail page as well, we will leave the option of passing an id of the profile detail.
 
 ### Solidify our code
 
@@ -53,4 +54,4 @@ is only accessible to reviewers.
 [Authorize(Policy = "UserReviewer")]
 public class ManageController : Controller
 ```
-And from the view we can click on the profile linke to watch profiles from all users
+And from the view we can click on the profile link to watch profiles from all users
