@@ -4,13 +4,14 @@
 
 - [Preface](#Preface)
 - [Work done](#Work-done)
--   [Seeding](#Seeding)
--   [Policy setup](#Policy-setup)
--   [Claims update](#Claims-update)
--   [SignIn manager errata](#SignIn-manager-errata)
--   [Profile](#Profile)
--	[Solidify our code](#Solidify-our-code)
--   [Manage claims](#Manage-claims)
+	- [Seeding](#Seeding)
+	- [Policy setup](#Policy-setup)
+	- [Claims update](#Claims-update)
+	- [SignIn manager errata](#SignIn-manager-errata)
+	- [Profile](#Profile)
+	- [Solidify our code](#Solidify-our-code)
+	- [Manage claims](#Manage-claims)
+
 ## Preface
 
 As mentioned before, we need at list one type of user with review privileges, given that we use in memory database for now, we need to seed said user every time the application starts.
