@@ -85,10 +85,11 @@ Now that we have some undestanding of Authentication and authuorization let's hu
 
 ### Policy access
 
-For our first sprint we will only have users with no privileges and users with review priviledges.
+For our first sprint we will only have users with no privileges and users with review privileges.
 
-### More than one policy access simoultaneously
+### More than one policy access simultaneously
 
-For this sprint we will have all user policies implmented
+For this sprint we will have all user policies implemented
+
 
 
