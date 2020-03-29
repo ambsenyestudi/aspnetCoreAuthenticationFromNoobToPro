@@ -9,7 +9,7 @@
     - [User sigIn manager](#User-sigIn-manager)
     - [Custom claims](#Custom-claims)
     - [User store](#User-store)
-    - [As a result] (#As-a-result)
+    - [As a result](#As-a-result)
 
 ## Preface
 
