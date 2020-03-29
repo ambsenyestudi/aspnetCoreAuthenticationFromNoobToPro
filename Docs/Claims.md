@@ -5,7 +5,7 @@
 - [Preface](#Preface)
 - [Work done](#Work-done)
     - [Configure you project](#Configure-you-project)
-    - [Claims factory](#Claims factory)
+    - [Claims factory](#Claims-factory)
     - [User sigIn manager](#User-sigIn-manager)
     - [Custom claims](#Custom-claims)
     - [User store](#User-store)
