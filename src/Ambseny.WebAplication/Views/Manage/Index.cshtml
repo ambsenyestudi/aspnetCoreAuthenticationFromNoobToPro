@@ -1,36 +1,62 @@
-﻿@model Ambseny.WebAplication.Models.Users.UserDetail
-
+﻿@model IEnumerable<Ambseny.WebAplication.Models.Users.EasyUserIdentity>
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService AuthorizationService
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "UserClaims";
 }
 
-<h1>Index</h1>
+<h1>UserClaims</h1>
 
-<div>
-    <h4>UserDetail</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Identity)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Identity)
-        </dd>
-    </dl>
-</div>
-<div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    <a asp-action="Index">Back to List</a>
-</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Identity)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Claim)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Identity)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Claim)
+                </td>
+                <td>
+                    @if ((await AuthorizationService.AuthorizeAsync(User, "UserEditor")).Succeeded)
+                    {
+                    <div>
+                        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                        @Html.ActionLink("Profile", "Index", "Profile", new { id = item.Id })
+                        @if ((await AuthorizationService.AuthorizeAsync(User, "UserAdministrator")).Succeeded)
+                        { 
+                            <div>
+                            | @Html.ActionLink("Delete", "Delete", new{ id = item.Id })
+                            </div>
+                        }
+                    </div>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

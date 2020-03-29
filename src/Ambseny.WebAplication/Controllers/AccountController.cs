@@ -29,7 +29,6 @@ namespace Ambseny.WebAplication.Controllers
             var signinResult = await signInManager.PasswordSignInAsync(user, user.Password, false, false);
             if (signinResult.Succeeded)
             {
-                var claims = HttpContext.User;
                 return Redirect("/Home");
             }
             else
@@ -56,7 +55,6 @@ namespace Ambseny.WebAplication.Controllers
             {
                 await signInManager.SignInAsync(user, false);
                 
-                //next step https://docs.microsoft.com/en-us/aspnet/core/security/authorization/claims?view=aspnetcore-3.1
                 return Redirect("/Home");
             }
             else

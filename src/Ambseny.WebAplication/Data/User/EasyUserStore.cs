@@ -67,8 +67,8 @@ namespace Ambseny.WebAplication.Data.User
             {
                 if (dbContext.Users.Any())
                 {
-                    var matches = dbContext.Users.Where(x => x.Id == userId);
-                    if (dbContext.Users.Any())
+                    var matches = dbContext.Users.Where(x => x.Id == userId).AsEnumerable();
+                    if (matches.Any())
                     {
                         return matches.First();
                     }
