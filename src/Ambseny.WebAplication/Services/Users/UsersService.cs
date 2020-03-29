@@ -1,6 +1,6 @@
 ﻿using Ambseny.WebAplication.Data;
 using Ambseny.WebAplication.Models.Users;
-using System;
+using Ambseny.WebAplication.Services.Claims;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -10,10 +10,12 @@ namespace Ambseny.WebAplication.Services.Users
     public class UsersService : IUsersService
     {
         private readonly EasyUserDbContext dbContext;
+        private readonly IClaimsService claimsService;
 
-        public UsersService(EasyUserDbContext dbContext)
+        public UsersService(EasyUserDbContext dbContext, IClaimsService claimsService)
         {
             this.dbContext = dbContext;
+            this.claimsService = claimsService;
         }
         public EasyUserIdentity GetUserIdentity(string id)
         {
@@ -22,26 +24,26 @@ namespace Ambseny.WebAplication.Services.Users
                 var result = ToUserIdentity(user);
                 return result;
             }
-            return default(EasyUserIdentity);
+            return null;
         }
         public IEnumerable<EasyUserIdentity> GetUserIdentities() =>
             dbContext.Users.AsEnumerable().Select(x => ToUserIdentity(x));
 
         private EasyUserIdentity ToUserIdentity(EasyUser user)
         {
-            TryGetClaimValueByUserId(user.Id, AmbsenyClaimTypes.ManageUsers.ToString(), out string claim);
+            claimsService.TryGetClaimValueByUserId(user.Id, AmbsenyClaimTypes.ManageUsers.ToString(), out string claimValue);
             return new EasyUserIdentity
             {
                 Id = user.Id,
                 Name = user.Name,
                 Identity = GetIdentityFromId(user.Id),
-                Claim = claim
+                Claim = claimValue
             };
         }
         private string GetIdentityFromId(string id)
         {
 
-            if (TryGetClaimCollectionByUserId(id, out IEnumerable<UserClaim> claimCollection))
+            if (claimsService.TryGetClaimCollectionByUserId(id, out IEnumerable<UserClaim> claimCollection))
             {
                 var claimsList = claimCollection.ToList();
                 if (claimsList.Count > 1)
@@ -55,7 +57,6 @@ namespace Ambseny.WebAplication.Services.Users
 
         public bool DeleteUser(string id)
         {
-
             if (TryGetUserById(id, out EasyUser user))
             {
                 dbContext.Remove(user);
@@ -66,19 +67,14 @@ namespace Ambseny.WebAplication.Services.Users
 
         public bool UpdateClaims(string id, Claim claim)
         {
-            if (TryGetClaimCollectionByUserId(id, out IEnumerable<UserClaim> claimCollection))
+            if(claimsService.TryGetClaimByUserId(id, claim.Type, out UserClaim userClaim))
             {
-                var matchingClaims = claimCollection.Where(x => x.ClaimType == claim.Type);
-                if (matchingClaims.Any())
-                {
-                    var updatingClaim = matchingClaims.First();
-                    updatingClaim.ClaimValue = claim.Value;
-                    dbContext.UserClaims.Update(updatingClaim);
-                    var changeCount = dbContext.SaveChanges();
-                    return changeCount > 0;
-                }
+                return claimsService.UpdateExistingClaim(id, claim);
             }
-            return false;
+            else
+            {
+                return claimsService.CreateNewClaim(id, claim);
+            }
         }
         public bool TryGetUserById(string id, out EasyUser user)
         {
@@ -94,44 +90,6 @@ namespace Ambseny.WebAplication.Services.Users
             }
             return success;
         }
-        public bool TryGetClaimCollectionByUserId(string userId, out IEnumerable<UserClaim> claimCollection)
-        {
-            var matches = dbContext.UserClaims.Where(x => x.UserId == userId);
-            var success = matches.Any();
-            if (success)
-            {
-                claimCollection = matches;
-            }
-            else
-            {
-                claimCollection = new List<UserClaim>();
-            }
-            return success;
-        }
-        public bool TryGetClaimByUserId(string userId, string claimType, out UserClaim userClaim)
-        {
-            var success = TryGetClaimCollectionByUserId(userId, out IEnumerable<UserClaim> claimCollection);
-            userClaim = null;
-            if (success)
-            {
-                var matchingClaims = claimCollection.Where(x => x.ClaimType == claimType);
-                if (matchingClaims.Any())
-                {
-                    userClaim = matchingClaims.First();
-                }
-            }
-            return success;
-        }
-        public bool TryGetClaimValueByUserId(string userId, string claimType, out string claimValue)
-        {
-            var success = TryGetClaimByUserId(userId, claimType, out UserClaim userClaim);
-            claimValue = string.Empty;
-            if (success)
-            {
-                claimValue = userClaim.ClaimValue;
-            }
-            
-            return false;
-        }
+        
     }
 }

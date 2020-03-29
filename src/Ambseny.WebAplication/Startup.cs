@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Ambseny.WebAplication.Data;
 using Ambseny.WebAplication.Data.User;
 using Ambseny.WebAplication.Models.Users;
+using Ambseny.WebAplication.Services.Claims;
 using Ambseny.WebAplication.Services.Users;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,6 +41,7 @@ namespace Ambseny.WebAplication
             services.AddTransient<EasyUserSignInManager>();
             services.AddTransient<EasyUserManager>();
             services.AddTransient<IUsersService, UsersService>();
+            services.AddTransient<IClaimsService, ClaimsService>();
             services.AddIdentity<EasyUser, IdentityRole>()
                 .AddUserStore<EasyUserStore>()
                 .AddRoleStore<EasyRoleStore>()

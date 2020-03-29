@@ -2,6 +2,7 @@
 using Ambseny.WebAplication.Services.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Linq;
 using System.Security.Claims;
 
@@ -25,14 +26,25 @@ namespace Ambseny.WebAplication.Controllers
         [HttpGet]
         public IActionResult Edit(string id)
         {
-            var identites = usersService.GetUserIdentity(id);
-            return View(identites);
+            var identity = usersService.GetUserIdentity(id);
+            var claim = AmbsenyManageUserClaims.None;
+            if(Enum.IsDefined(typeof(AmbsenyManageUserClaims), identity.Claim))
+            {
+                claim = (AmbsenyManageUserClaims)Enum.Parse(typeof(AmbsenyManageUserClaims), identity.Claim);
+            }
+            var editIdentity = new EditEasyManageUser
+            {
+                Id = identity.Id,
+                Name = identity.Name,
+                Identity = claim
+            };
+            return View(editIdentity);
         }
         [HttpPost]
-        public IActionResult Edit(EasyUserIdentity userIdentity)
+        public IActionResult Edit(EditEasyManageUser editUserClaims)
         {
-            var claim = new Claim(userIdentity.Identity, userIdentity.Claim);
-            var result = usersService.UpdateClaims(userIdentity.Id, claim);
+            var claim = new Claim(AmbsenyClaimTypes.ManageUsers.ToString(), editUserClaims.Identity.ToString());
+            var result = usersService.UpdateClaims(editUserClaims.Id, claim);
             return Redirect("/Manage/Index");
         }
 
