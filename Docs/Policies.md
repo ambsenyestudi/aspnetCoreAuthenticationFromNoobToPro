@@ -11,6 +11,7 @@
 -   [Profile](#Profile)
 -	[Solidify our code](#Solidify-our-code)
 -   [Manage claims](#Manage-claims)
+
 ## Preface
 
 As mentioned before, we need at list one type of user with review privileges, given that we use in memory database for now, we need to seed said user every time the application starts.
@@ -36,7 +37,7 @@ In order to avoid the constants in the code base smell I added two enums at [Use
 
 ### SignIn manager errata
 
-Disclaimer from the las section we modified the [EasyUserSignInManager](/src/Ambseny.WebAplication/Models/Users/UserClaim.cs) **PasswordSignInAsync** method to call 
+Disclaimer from the las section we modified the [EasyUserSignInManager](/src/Ambseny.WebAplication/Models/Users/EasyUserSignInManager.cs) **PasswordSignInAsync** method to call 
 SignInAsync after checking the password or else our cookie wasn't updated with the new signin state.
 
 ### Profile 
