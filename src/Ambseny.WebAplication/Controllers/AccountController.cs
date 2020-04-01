@@ -1,9 +1,7 @@
 ﻿using Ambseny.WebAplication.Data.User;
 using Ambseny.WebAplication.Models.Users;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ambseny.WebAplication.Controllers
@@ -26,6 +24,7 @@ namespace Ambseny.WebAplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(EasyUser user)
         {
+            user.NormalizedName = user.Name.ToUpper();
             var signinResult = await signInManager.PasswordSignInAsync(user, user.Password, false, false);
             if (signinResult.Succeeded)
             {
@@ -34,8 +33,9 @@ namespace Ambseny.WebAplication.Controllers
             else
             {
                 //use name validation to output 
-                var errorMessage = string.Format(AmbsenyAuthenticationDefaults.IdentityErrorDefaults[AmbsenyIdentityErrorDefaults.NonExistingUser], user.Name);
-                ModelState.AddModelError(nameof(user.Name), errorMessage);
+                //var errorMessage = string.Format(AmbsenyAuthenticationDefaults.IdentityErrorDefaults[AmbsenyIdentityErrorDefaults.NonExistingUser], user.Name);
+                //fix this
+                ModelState.AddModelError(nameof(user.Name), "Non existing");
             }
             return View(user);
         }
@@ -48,7 +48,7 @@ namespace Ambseny.WebAplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(CreateEasyUser user)
         {
-            
+            user.NormalizedName = user.Name.ToUpper();
             var creationResult = await userManager.CreateAsync(user);
             
             if (creationResult.Succeeded)

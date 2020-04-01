@@ -1,5 +1,6 @@
 ﻿using Ambseny.WebAplication.Models.Users;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
@@ -7,13 +8,15 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Ambseny.WebAplication.Data.User
 {
     public class EasyUserSignInManager : SignInManager<EasyUser>
     {
-        public EasyUserSignInManager(UserManager<EasyUser> userManager, 
+        private readonly UserManager<EasyUser> userManager;
+        public EasyUserSignInManager(EasyUserManager userManager, 
             IHttpContextAccessor contextAccessor, 
             IUserClaimsPrincipalFactory<EasyUser> claimsFactory, 
             IOptions<IdentityOptions> optionsAccessor, 
@@ -21,29 +24,33 @@ namespace Ambseny.WebAplication.Data.User
             IAuthenticationSchemeProvider schemes, 
             IUserConfirmation<EasyUser> confirmation) : base(userManager, contextAccessor, claimsFactory, optionsAccessor, logger, schemes, confirmation)
         {
+            this.userManager = userManager;
         }
-        public async override Task SignInAsync(EasyUser user, bool isPersistent, string authenticationMethod = null)
+        public override Task SignInAsync(EasyUser user, bool isPersistent, string authenticationMethod = null) =>
+            SignInAsync(user, new AuthenticationProperties { IsPersistent = isPersistent }, authenticationMethod);
+
+        public async override Task SignInAsync(EasyUser user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
         {
-            await base.SignInAsync(user, isPersistent, authenticationMethod);
-            await UpdateContextUserAsync(Context, user); 
+            var userPrincipal = await ClaimsFactory.CreateAsync(user);
+            if (authenticationMethod != null)
+            {
+                userPrincipal.Identities.First().AddClaim(new Claim(ClaimTypes.AuthenticationMethod, authenticationMethod));
+            }
+            await Context.SignInAsync(IdentityConstants.ApplicationScheme,
+                userPrincipal,
+                authenticationProperties ?? new AuthenticationProperties());
         }
 
         public async override Task<SignInResult> PasswordSignInAsync(EasyUser user, string password, bool isPersistent, bool lockoutOnFailure)
         {
-            var storedUser = await UserManager.FindByNameAsync(user.Name);
-            if (storedUser != null)
+            if(await userManager.CheckPasswordAsync(user, password))
             {
-                if (storedUser.Password == password)
-                {
-                    await SignInAsync(storedUser, isPersistent, null);
-                    return SignInResult.Success;
-                }
+                await SignInAsync(user, new AuthenticationProperties { IsPersistent = isPersistent });
+                return SignInResult.Success;
             }
             return SignInResult.Failed;
-        }
-        private async Task UpdateContextUserAsync(HttpContext context, EasyUser user)
-        {
-            context.User = await ClaimsFactory.CreateAsync(user);
+            
+            
         }
     }
 }

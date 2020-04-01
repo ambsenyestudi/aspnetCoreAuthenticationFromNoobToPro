@@ -46,18 +46,21 @@ namespace Ambseny.WebAplication
             var admin = new EasyUser
             {
                 Id = Guid.NewGuid().ToString(),
+                NormalizedName = "admin".ToUpper(),
                 Name = "admin",
                 Password = "admin",
             };
             var bob = new EasyUser
             {
                 Id = Guid.NewGuid().ToString(),
+                NormalizedName = "bob".ToUpper(),
                 Name = "bob",
                 Password = "bob",
             };
             var alice = new EasyUser
             {
                 Id = Guid.NewGuid().ToString(),
+                NormalizedName = "alice".ToUpper(),
                 Name = "alice",
                 Password = "alice",
             };

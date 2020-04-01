@@ -10,5 +10,6 @@ namespace Ambseny.WebAplication.Models.Users
         public string Name { get; set; }
         [Required]
         public string Password { get; set; }
+        public string NormalizedName { get; internal set; }
     }
 }

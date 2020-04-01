@@ -12,10 +12,12 @@ namespace Ambseny.WebAplication.Data.User
     public class EasyUserStore : IUserStore<EasyUser>
     {
         private readonly EasyUserDbContext dbContext;
+        private readonly AmbsenyIdentityErrorDescriber errorDescriber;
 
-        public EasyUserStore(EasyUserDbContext dbContext)
+        public EasyUserStore(EasyUserDbContext dbContext, AmbsenyIdentityErrorDescriber errorDescriber)
         {
             this.dbContext = dbContext;
+            this.errorDescriber = errorDescriber;
         }
         public async Task<IdentityResult> CreateAsync(EasyUser user, CancellationToken cancellationToken)
         {
@@ -31,30 +33,35 @@ namespace Ambseny.WebAplication.Data.User
                     UserId = user.Id
                 };
                 dbContext.UserClaims.Add(basicClaim);
+                
                 var result = await dbContext.SaveChangesAsync();
                 if (result > 0)
                 {
                     return IdentityResult.Success;
                 }
-                return IdentityResult.Failed(new IdentityError[] {
-                    new IdentityError(){
-                        Code = AmbsenyIdentityErrorDefaults.UnableToPersistNewUser.ToString(),
-                        Description = AmbsenyAuthenticationDefaults.IdentityErrorDefaults[AmbsenyIdentityErrorDefaults.UnableToPersistNewUser]
-                    }
-                });
+                
+                return IdentityResult.Failed(errorDescriber.UnableToPersistNewUser(user.Name));
+                
 
             }
-            return IdentityResult.Failed(new IdentityError[] {
-                new IdentityError(){
-                    Code = AmbsenyIdentityErrorDefaults.ExistingName.ToString(),
-                    Description = string.Format(AmbsenyAuthenticationDefaults.IdentityErrorDefaults[AmbsenyIdentityErrorDefaults.ExistingName], user.Name)
-                }
-            }); 
+           
+            return IdentityResult.Failed(errorDescriber.InvalidUserName(user.Name)); 
         }
 
-        public Task<IdentityResult> DeleteAsync(EasyUser user, CancellationToken cancellationToken)
+        public async Task<IdentityResult> DeleteAsync(EasyUser user, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            var result = await FindByNameAsync(user.NormalizedName, cancellationToken);
+            if(result!=null)
+            {
+                dbContext.Remove(result);
+                var count = await dbContext.SaveChangesAsync();
+                if(count > 0)
+                {
+                    return IdentityResult.Success;
+                }
+                return IdentityResult.Failed(errorDescriber.UnableToDeleteNewUser(user.Name));
+            }
+            return IdentityResult.Failed(errorDescriber.NonExistingUser(user.Name));
         }
 
         public void Dispose()
@@ -76,15 +83,14 @@ namespace Ambseny.WebAplication.Data.User
                 return default(EasyUser);
             });
 
+        
         public Task<EasyUser> FindByNameAsync(string normalizedUserName, CancellationToken cancellationToken) => 
             Task.Factory.StartNew(() => dbContext.Users
-                .Where(x => x.Name.ToUpper() == normalizedUserName.ToUpper())
+                .Where(x => x.NormalizedName == normalizedUserName)
                 .FirstOrDefault());
 
-        public Task<string> GetNormalizedUserNameAsync(EasyUser user, CancellationToken cancellationToken)
-        {
-            throw new System.NotImplementedException();
-        }
+        public Task<string> GetNormalizedUserNameAsync(EasyUser user, CancellationToken cancellationToken) =>
+            Task.FromResult(user.NormalizedName);
 
         public Task<string> GetUserIdAsync(EasyUser user, CancellationToken cancellationToken) =>
             Task.Factory.StartNew(() =>
@@ -105,15 +111,11 @@ namespace Ambseny.WebAplication.Data.User
         public Task<string> GetUserNameAsync(EasyUser user, CancellationToken cancellationToken) =>
             Task.FromResult(user.Name);
 
-        public Task SetNormalizedUserNameAsync(EasyUser user, string normalizedName, CancellationToken cancellationToken)
-        {
-            throw new System.NotImplementedException();
-        }
+        public Task SetNormalizedUserNameAsync(EasyUser user, string normalizedName, CancellationToken cancellationToken) =>
+            Task.FromResult(user.NormalizedName = normalizedName);
 
-        public Task SetUserNameAsync(EasyUser user, string userName, CancellationToken cancellationToken)
-        {
-            throw new System.NotImplementedException();
-        }
+        public Task SetUserNameAsync(EasyUser user, string userName, CancellationToken cancellationToken) =>
+            Task.FromResult(user.Name = userName);
 
         public Task<IdentityResult> UpdateAsync(EasyUser user, CancellationToken cancellationToken)
         {

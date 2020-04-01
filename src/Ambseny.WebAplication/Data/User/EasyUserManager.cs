@@ -13,7 +13,7 @@ namespace Ambseny.WebAplication.Data.User
     public class EasyUserManager : UserManager<EasyUser>
     {
         public EasyUserManager(
-            IUserStore<EasyUser> store, 
+            EasyUserStore store, 
             IOptions<IdentityOptions> optionsAccessor, 
             IPasswordHasher<EasyUser> passwordHasher, 
             IEnumerable<IUserValidator<EasyUser>> userValidators, 
@@ -32,6 +32,21 @@ namespace Ambseny.WebAplication.Data.User
         public override Task<EasyUser> FindByNameAsync(string userName)
         {
             return Store.FindByNameAsync(userName, new CancellationToken());
+        }
+        
+        public override async Task<bool> CheckPasswordAsync(EasyUser user, string password)
+        {
+
+            var storedUser = await FindByNameAsync(user.NormalizedName);
+            if (storedUser != null)
+            {
+                if (storedUser.Password == password)
+                {
+                    return true;
+                }
+            }
+            return false;
+            //return base.CheckPasswordAsync(user, password);
         }
     }
 }

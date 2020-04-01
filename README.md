@@ -11,6 +11,7 @@
     - [Signout](#Signout)
     - [Claims](#Claims)
     - [Policies for our application](#Policies-for-our-application)
+    - [Password](#Password)
 
 ## Preface
 This project is meant be a step by step form securing your web applications to using open-id for your suite of apps
@@ -93,6 +94,9 @@ For our first sprint we will only have users with no privileges and users with r
 For this sprint we will have all user policies implemented
 [Multy Policies](Docs/MultyPolicies.md)
 
+### Password
+
+[Password](Docs/Password.md)
 
 
 

@@ -10,20 +10,22 @@ namespace Ambseny.WebAplication.Data.User
     public class EasyUserClaimsPrincipalFactory : UserClaimsPrincipalFactory<EasyUser, IdentityRole>
     {
         private readonly EasyUserDbContext dbContext;
+        private readonly EasyUserManager userManager;
 
         public EasyUserClaimsPrincipalFactory(
-            UserManager<EasyUser> userManager, 
+            EasyUserManager userManager, 
             RoleManager<IdentityRole> roleManager, 
             IOptions<IdentityOptions> options,
             EasyUserDbContext dbContext) : base(userManager, roleManager, options)
         {
             this.dbContext = dbContext;
+            this.userManager = userManager;
         }
 
         protected override async Task<ClaimsIdentity> GenerateClaimsAsync(EasyUser user)
         {
-            var userId = user.Id;
-            var userClaims = dbContext.UserClaims.Where(x => x.UserId == user.Id);
+            var storedUser = await userManager.FindByNameAsync(user.NormalizedName);
+            var userClaims = dbContext.UserClaims.Where(x => x.UserId == storedUser.Id);
             if(userClaims.Any())
             {
                 var identity = await base.GenerateClaimsAsync(user);

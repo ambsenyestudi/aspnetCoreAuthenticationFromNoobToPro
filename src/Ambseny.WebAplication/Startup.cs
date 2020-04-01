@@ -8,6 +8,7 @@ using Ambseny.WebAplication.Data.User;
 using Ambseny.WebAplication.Models.Users;
 using Ambseny.WebAplication.Services.Claims;
 using Ambseny.WebAplication.Services.Users;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -40,20 +41,25 @@ namespace Ambseny.WebAplication
 
             services.AddTransient<EasyUserSignInManager>();
             services.AddTransient<EasyUserManager>();
+            services.AddTransient<EasyUserStore>();
+            services.AddTransient<AmbsenyIdentityErrorDescriber>();
+
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IClaimsService, ClaimsService>();
+
             services.AddIdentity<EasyUser, IdentityRole>()
                 .AddUserStore<EasyUserStore>()
                 .AddRoleStore<EasyRoleStore>()
                 .AddSignInManager<EasyUserSignInManager>()
+                .AddErrorDescriber<AmbsenyIdentityErrorDescriber>()
                 .AddClaimsPrincipalFactory<EasyUserClaimsPrincipalFactory>();
 
-            services.ConfigureApplicationCookie(config => {
-                config.Cookie.Name = "IdentityAutheticate.Cookie";
-                config.LoginPath = "/Account/Login";
-            });
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(config => {
+                    config.Cookie.Name = "IdentityAutheticate.Cookie";
+                    config.LoginPath = "/Account/Login";
+                });
 
-            services.AddAuthentication();
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("Minimal", policy => policy.RequireClaim(ClaimTypes.Sid));
