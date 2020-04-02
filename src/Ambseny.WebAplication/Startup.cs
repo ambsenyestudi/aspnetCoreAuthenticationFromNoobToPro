@@ -43,15 +43,23 @@ namespace Ambseny.WebAplication
             services.AddTransient<EasyUserManager>();
             services.AddTransient<EasyUserStore>();
             services.AddTransient<AmbsenyIdentityErrorDescriber>();
+            services.AddTransient<PasswordHasher<EasyUser>>();
 
             services.AddTransient<IUsersService, UsersService>();
             services.AddTransient<IClaimsService, ClaimsService>();
 
-            services.AddIdentity<EasyUser, IdentityRole>()
+            services.AddIdentity<EasyUser, IdentityRole>(config => {
+                //just for the sake of rapid testing
+                config.Password.RequiredLength = 3;
+                config.Password.RequireDigit = false;
+                config.Password.RequireNonAlphanumeric = false;
+                config.Password.RequireUppercase = false;
+            })
                 .AddUserStore<EasyUserStore>()
                 .AddRoleStore<EasyRoleStore>()
                 .AddSignInManager<EasyUserSignInManager>()
                 .AddErrorDescriber<AmbsenyIdentityErrorDescriber>()
+                
                 .AddClaimsPrincipalFactory<EasyUserClaimsPrincipalFactory>();
             //all of the following is reundand (check Password.md)
             services.AddAuthentication(config => 

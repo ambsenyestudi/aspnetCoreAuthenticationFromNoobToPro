@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ambseny.WebAplication.Data.User
 {
-    public class EasyUserStore : IUserStore<EasyUser>
+    public class EasyUserStore : IUserStore<EasyUser>, IUserPasswordStore<EasyUser>
     {
         private readonly EasyUserDbContext dbContext;
         private readonly AmbsenyIdentityErrorDescriber errorDescriber;
@@ -21,7 +21,7 @@ namespace Ambseny.WebAplication.Data.User
         }
         public async Task<IdentityResult> CreateAsync(EasyUser user, CancellationToken cancellationToken)
         {
-            if (!dbContext.Users.Any(x => x.Name == user.Name))
+            if (!dbContext.Users.Any(x => x.NormalizedName == user.NormalizedName))
             {
                 user.Id = Guid.NewGuid().ToString();
                 dbContext.Users.Add(user);
@@ -92,13 +92,18 @@ namespace Ambseny.WebAplication.Data.User
         public Task<string> GetNormalizedUserNameAsync(EasyUser user, CancellationToken cancellationToken) =>
             Task.FromResult(user.NormalizedName);
 
+        public Task<string> GetPasswordHashAsync(EasyUser user, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<string> GetUserIdAsync(EasyUser user, CancellationToken cancellationToken) =>
             Task.Factory.StartNew(() =>
             {
                 if (dbContext.Users.Any())
                 {
-                    var matches = dbContext.Users.Where(x => x.Name == user.Name && x.Password == x.Password);
-                    if (dbContext.Users.Any())
+                    var matches = dbContext.Users.Where(x => x.NormalizedName == user.NormalizedName);
+                    if (matches.Any())
                     {
                         return matches.First().Id;
                     }
@@ -111,15 +116,34 @@ namespace Ambseny.WebAplication.Data.User
         public Task<string> GetUserNameAsync(EasyUser user, CancellationToken cancellationToken) =>
             Task.FromResult(user.Name);
 
+        public Task<bool> HasPasswordAsync(EasyUser user, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task SetNormalizedUserNameAsync(EasyUser user, string normalizedName, CancellationToken cancellationToken) =>
             Task.FromResult(user.NormalizedName = normalizedName);
+
+        public async Task SetPasswordHashAsync(EasyUser user, string passwordHash, CancellationToken cancellationToken) =>
+            Task.FromResult(user.PasswordHash = passwordHash);
 
         public Task SetUserNameAsync(EasyUser user, string userName, CancellationToken cancellationToken) =>
             Task.FromResult(user.Name = userName);
 
-        public Task<IdentityResult> UpdateAsync(EasyUser user, CancellationToken cancellationToken)
+        public async Task<IdentityResult> UpdateAsync(EasyUser user, CancellationToken cancellationToken)
         {
-            throw new System.NotImplementedException();
+            var storedUser = await FindByIdAsync(user.Id, cancellationToken);
+            storedUser.Name = user.Name;
+            storedUser.NormalizedName = user.NormalizedName;
+            storedUser.PasswordHash = user.PasswordHash;
+            dbContext.Users.Update(storedUser);
+            var updates = await dbContext.SaveChangesAsync();
+            if(updates>0)
+            {
+                return IdentityResult.Success;
+            }
+            var des = new AmbsenyIdentityErrorDescriber();
+            return IdentityResult.Failed(des.UnableToPersistNewUser(user.NormalizedName));
         }
         
     }

@@ -134,6 +134,7 @@ public abstract class UserStoreBase<TUser, TKey, TUserClaim, TUserLogin, TUserTo
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TUserToken : IdentityUserToken<TKey>, new()
 ```
-An thats the casting mentioned at the previous section happens
+An thats the casting mentioned at the previous section happens.
+As seen here now our Password becomes PasswordHash at EasyUser in order to implemetn IUserPasswrodStore for EasyUserStore.
 ### IdentityErrorDescriber
 Just to avoid litering everythin with codes an everry thing, we created a [AmbsenyIdentityErrorDescriber](/src/Ambseny.WebAplication/Data/AmbsenyIdentityErrorDescriber.cs) class to add on the exiting ones

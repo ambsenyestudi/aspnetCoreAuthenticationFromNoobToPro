@@ -7,6 +7,7 @@ using Ambseny.WebAplication.Data;
 using Ambseny.WebAplication.Data.User;
 using Ambseny.WebAplication.Models.Users;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -36,34 +37,35 @@ namespace Ambseny.WebAplication
             {
                 var serviceProvider = scope.ServiceProvider;
                 var dbContext = serviceProvider.GetRequiredService<EasyUserDbContext>();
-                Seed(dbContext);
+                var passwordHasher = serviceProvider.GetRequiredService<PasswordHasher<EasyUser>>();
+                Seed(dbContext, passwordHasher);
                 
             }
         }
 
-        private static void Seed(EasyUserDbContext dbContext)
+        private static void Seed(EasyUserDbContext dbContext, PasswordHasher<EasyUser> passwordHasher)
         {
             var admin = new EasyUser
             {
                 Id = Guid.NewGuid().ToString(),
                 NormalizedName = "admin".ToUpper(),
-                Name = "admin",
-                Password = "admin",
+                Name = "admin"
             };
+            admin.PasswordHash = passwordHasher.HashPassword(admin, "admin");
             var bob = new EasyUser
             {
                 Id = Guid.NewGuid().ToString(),
                 NormalizedName = "bob".ToUpper(),
-                Name = "bob",
-                Password = "bob",
+                Name = "bob"
             };
+            bob.PasswordHash = passwordHasher.HashPassword(bob, "bob");
             var alice = new EasyUser
             {
                 Id = Guid.NewGuid().ToString(),
                 NormalizedName = "alice".ToUpper(),
                 Name = "alice",
-                Password = "alice",
             };
+            alice.PasswordHash = passwordHasher.HashPassword(alice, "alice");
             dbContext.Users.AddRange(admin, alice, bob);
             var claims = new List<UserClaim>
             {

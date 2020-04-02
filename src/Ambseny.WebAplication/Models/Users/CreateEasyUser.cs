@@ -2,7 +2,7 @@
 
 namespace Ambseny.WebAplication.Models.Users
 {
-    public class CreateEasyUser: EasyUser
+    public class CreateEasyUser: LoginEasyUser
     {
         [Required]
         [Compare("Password")]

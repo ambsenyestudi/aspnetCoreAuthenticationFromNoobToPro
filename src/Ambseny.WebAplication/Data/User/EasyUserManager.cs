@@ -27,7 +27,7 @@ namespace Ambseny.WebAplication.Data.User
         }
         public override Task<IdentityResult> CreateAsync(EasyUser user)
         {
-            return Store.CreateAsync((EasyUser)user, new CancellationToken());
+            return Store.CreateAsync(user, new CancellationToken());
         }
         public override Task<EasyUser> FindByNameAsync(string userName)
         {
@@ -40,10 +40,15 @@ namespace Ambseny.WebAplication.Data.User
             var storedUser = await FindByNameAsync(user.NormalizedName);
             if (storedUser != null)
             {
+                var result = PasswordHasher.VerifyHashedPassword(storedUser, storedUser.PasswordHash, password);
+                return result != PasswordVerificationResult.Failed;
+                //what to do with result
+                /*
                 if (storedUser.Password == password)
                 {
                     return true;
                 }
+                */
             }
             return false;
             //return base.CheckPasswordAsync(user, password);

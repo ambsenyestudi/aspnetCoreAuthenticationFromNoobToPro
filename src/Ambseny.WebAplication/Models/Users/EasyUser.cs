@@ -9,7 +9,7 @@ namespace Ambseny.WebAplication.Models.Users
         [Required]
         public string Name { get; set; }
         [Required]
-        public string Password { get; set; }
+        public string PasswordHash { get; set; }
         public string NormalizedName { get; internal set; }
     }
 }

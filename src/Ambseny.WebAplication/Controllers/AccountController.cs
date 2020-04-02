@@ -19,13 +19,13 @@ namespace Ambseny.WebAplication.Controllers
         [HttpGet]
         public IActionResult Login()
         {
-            return View(new EasyUser());
+            return View(new LoginEasyUser());
         }
         [HttpPost]
-        public async Task<IActionResult> Login(EasyUser user)
+        public async Task<IActionResult> Login(LoginEasyUser user)
         {
-            user.NormalizedName = user.Name.ToUpper();
-            var signinResult = await signInManager.PasswordSignInAsync(user, user.Password, false, false);
+           
+            var signinResult = await signInManager.PasswordSignInAsync(user.Name.ToUpper(), user.Password, false, false);
             if (signinResult.Succeeded)
             {
                 return Redirect("/Home");
@@ -48,12 +48,14 @@ namespace Ambseny.WebAplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(CreateEasyUser user)
         {
-            user.NormalizedName = user.Name.ToUpper();
-            var creationResult = await userManager.CreateAsync(user);
+            //user usernormalizer dependency
+            var normalizedName = user.Name.ToUpper();
+            var easyUser = new EasyUser { Name = user.Name, NormalizedName = normalizedName };
+            var creationResult = await userManager.CreateAsync(easyUser, user.Password);
             
             if (creationResult.Succeeded)
             {
-                await signInManager.SignInAsync(user, false);
+                await signInManager.SignInAsync(easyUser, false);
                 
                 return Redirect("/Home");
             }
