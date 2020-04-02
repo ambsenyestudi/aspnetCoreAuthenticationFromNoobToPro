@@ -36,8 +36,8 @@ namespace Ambseny.WebAplication.Data.User
             {
                 userPrincipal.Identities.First().AddClaim(new Claim(ClaimTypes.AuthenticationMethod, authenticationMethod));
             }
-            await Context.SignInAsync(IdentityConstants.ApplicationScheme,
-                userPrincipal,
+            await Context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,//IdentityConstants.ApplicationScheme,
+            userPrincipal,
                 authenticationProperties ?? new AuthenticationProperties());
         }
 

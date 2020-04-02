@@ -53,8 +53,11 @@ namespace Ambseny.WebAplication
                 .AddSignInManager<EasyUserSignInManager>()
                 .AddErrorDescriber<AmbsenyIdentityErrorDescriber>()
                 .AddClaimsPrincipalFactory<EasyUserClaimsPrincipalFactory>();
-
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //all of the following is reundand (check Password.md)
+            services.AddAuthentication(config => 
+            {
+                config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
                 .AddCookie(config => {
                     config.Cookie.Name = "IdentityAutheticate.Cookie";
                     config.LoginPath = "/Account/Login";
