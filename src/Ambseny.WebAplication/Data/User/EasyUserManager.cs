@@ -4,7 +4,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,16 +41,8 @@ namespace Ambseny.WebAplication.Data.User
             {
                 var result = PasswordHasher.VerifyHashedPassword(storedUser, storedUser.PasswordHash, password);
                 return result != PasswordVerificationResult.Failed;
-                //what to do with result
-                /*
-                if (storedUser.Password == password)
-                {
-                    return true;
-                }
-                */
             }
             return false;
-            //return base.CheckPasswordAsync(user, password);
         }
     }
 }

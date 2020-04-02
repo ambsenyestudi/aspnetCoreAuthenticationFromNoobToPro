@@ -59,9 +59,9 @@ namespace Ambseny.WebAplication
                 .AddRoleStore<EasyRoleStore>()
                 .AddSignInManager<EasyUserSignInManager>()
                 .AddErrorDescriber<AmbsenyIdentityErrorDescriber>()
-                
                 .AddClaimsPrincipalFactory<EasyUserClaimsPrincipalFactory>();
-            //all of the following is reundand (check Password.md)
+
+            //all of the following is redundant (check Password.md)
             services.AddAuthentication(config => 
             {
                 config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;

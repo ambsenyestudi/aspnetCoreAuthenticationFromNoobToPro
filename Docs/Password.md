@@ -4,26 +4,26 @@
 
 - [Preface](#Preface)
 - [Work done](#Work-done)
+-   [SignInManager](#SignInManager)
+-   [UserManager](#UserManager)
+-   [UserStore](#UserStore)
 -   [Seeding](#Seeding)
--   [Policy setup](#Policy-setup)
--   [Claims update](#Claims-update)
--   [SignIn manager errata](#SignIn-manager-errata)
--   [Profile](#Profile)
--	[Solidify our code](#Solidify-our-code)
--   [Manage claims](#Manage-claims)
+-   [IdentityErrorDescriber](#IdentityErrorDescriber)
+-	[Setup](#Setup)
 
 ##Preface
 
-Now that we have some easy undestanding of what is happening with claims policies and so on, it's time that we make better use of Identity. Let's explore and further use it's implementation.
+Now that we have some easy understanding of what is happening with claims policies and so on, it's time that we make better use of Identity. Let's explore and further use it's implementation.
 
 ###Work done
 
-We completely changed the signinmanager in order to use its true implementation with the context signin. At the preceding section, to signin we used our implementation of 
+### SignInManager
+We completely changed the SignInManager in order to use its true implementation with the context signin. At the preceding section, to signin we used our implementation of 
 signing that called the base classe's method to sign in and then we called our method UpdateContextAsync to set the Identity at context user.
 
-No we are going take a look at the base implementation of [SignInManager](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Core/src/SignInManager.cs) to improve our's.
+Now we are going take a look at the base implementation of [SignInManager](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Core/src/SignInManager.cs) to improve ours.
 
-So at about line 204 at method SignInAsync we can observe this:
+So, at about line 204 at method SignInAsync we can observe this:
 ```
 public virtual Task SignInAsync(TUser user, AuthenticationProperties authenticationProperties, string authenticationMethod = null)
 {
@@ -50,10 +50,10 @@ public virtual async Task SignInWithClaimsAsync(TUser user, AuthenticationProper
 }
 ```
 
-So inted of setting the context User we user tis sing in methods. Of course we need to user the scheme name so there wount be any sing in at all. Luckily [IdentityConstants](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Core/src/IdentityConstants.cs)
-privides us with the applicationscheme of its own setting at [IdentityServiceCollectionExtensions](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Core/src/IdentityServiceCollectionExtensions.cs)
+So instead of setting the context User we user its sing in methods. Of course, we need to user the scheme name so there wouldn’t be any sing in at all. Luckily [IdentityConstants](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Core/src/IdentityConstants.cs)
+provides us with the applicationscheme of its own setting at [IdentityServiceCollectionExtensions](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Core/src/IdentityServiceCollectionExtensions.cs)
 
-So efectivelly all is set for you at AddIndentity() and its not configurable for you any more, even the rediret path to login!!!
+So effectively all is set for you at AddIndentity() and it’s not configurable for you any more, even the redirect path to login!!!
 
 ### UserManager
 
@@ -97,7 +97,7 @@ protected virtual async Task<PasswordVerificationResult> VerifyPasswordAsync(IUs
     return PasswordHasher.VerifyHashedPassword(user, hash, password);
 }
 ```
-The store of the preceding method is simpley casting the user store to userpassword store (at about line 2591)
+The store of the preceding method is simply casting the user store to userpasswordstore (at about line 2591)
 ```
 private IUserPasswordStore<TUser> GetPasswordStore()
 {
@@ -111,8 +111,8 @@ private IUserPasswordStore<TUser> GetPasswordStore()
     return cast;
 }
 ```
-### User store
-We added the normalized name to make it easyer to find use but if we observ the source code we get form the baseclass [UserStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/UserStoreBase.cs)
+### UserStore
+We added the normalized name to make it easier to find use but if we observe the source code we get form the base class [UserStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/UserStoreBase.cs)
 at Identity/Extensions.Stores it implements all the interfaces
 ```
 public abstract class UserStoreBase<TUser, TKey, TUserClaim, TUserLogin, TUserToken> :
@@ -134,7 +134,34 @@ public abstract class UserStoreBase<TUser, TKey, TUserClaim, TUserLogin, TUserTo
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TUserToken : IdentityUserToken<TKey>, new()
 ```
-An thats the casting mentioned at the previous section happens.
-As seen here now our Password becomes PasswordHash at EasyUser in order to implemetn IUserPasswrodStore for EasyUserStore.
+And that’s the casting mentioned at the previous section happens.
+As seen here now our Password becomes PasswordHash at EasyUser in order to implement IUserPasswrodStore for EasyUserStore.
+We also implemented IUserPasswordStore so we again can hash password [EasyUserStore](/src/Ambseny.WebAplication/Data/User/EasyUserStore.cs)
+
+### Seeding
+Since now we use the default asp net core Identity Password Hasher, we adapted at [Program](/src/Ambseny.WebAplication/Program.cs) the Seed() method accordingly to have functioning password
+
 ### IdentityErrorDescriber
-Just to avoid litering everythin with codes an everry thing, we created a [AmbsenyIdentityErrorDescriber](/src/Ambseny.WebAplication/Data/AmbsenyIdentityErrorDescriber.cs) class to add on the exiting ones
+Just to avoid littering everything with error codes and despcriptions, we created a [AmbsenyIdentityErrorDescriber](/src/Ambseny.WebAplication/Data/AmbsenyIdentityErrorDescriber.cs) class to add on the existing ones
+
+### Setup
+
+Finally, at startup we configured a few thing to have a password hasher and for the sake of fast testing, allowing a very easy password as [Startup](/src/Ambseny.WebAplication/Startup.cs)
+```
+services.AddTransient<PasswordHasher<EasyUser>>();
+services.AddTransient<IUsersService, UsersService>();
+services.AddTransient<IClaimsService, ClaimsService>();
+
+services.AddIdentity<EasyUser, IdentityRole>(config => {
+    //just for the sake of rapid testing
+    config.Password.RequiredLength = 3;
+    config.Password.RequireDigit = false;
+    config.Password.RequireNonAlphanumeric = false;
+    config.Password.RequireUppercase = false;
+})
+    .AddUserStore<EasyUserStore>()
+    .AddRoleStore<EasyRoleStore>()
+    .AddSignInManager<EasyUserSignInManager>()
+    .AddErrorDescriber<AmbsenyIdentityErrorDescriber>()
+    .AddClaimsPrincipalFactory<EasyUserClaimsPrincipalFactory>();
+```
