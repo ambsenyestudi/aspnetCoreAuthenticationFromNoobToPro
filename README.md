@@ -98,5 +98,9 @@ For this sprint we will have all user policies implemented
 
 Let's implement our password checking better. This means hashing and verifying your [Password](Docs/Password.md)
 
+### Claims Store
+
+Let's use the tools of Identity to refactor our code to implement [ClaimStore](Docs/ClaimStore.md)
+
 
 
