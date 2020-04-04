@@ -4,12 +4,12 @@
 
 - [Preface](#Preface)
 - [Work done](#Work-done)
--   [SignInManager](#SignInManager)
--   [UserManager](#UserManager)
--   [UserStore](#UserStore)
--   [Seeding](#Seeding)
--   [IdentityErrorDescriber](#IdentityErrorDescriber)
--	[Setup](#Setup)
+    - [SignInManager](#SignInManager)
+    - [UserManager](#UserManager)
+    - [UserStore](#UserStore)
+    - [Seeding](#Seeding)
+    - [IdentityErrorDescriber](#IdentityErrorDescriber)
+    - [Setup](#Setup)
 
 ## Preface
 

@@ -4,13 +4,13 @@
 
 - [Preface](#Preface)
 - [Work done](#Work-done)
--   [Seeding](#Seeding)
--   [Policy setup](#Policy-setup)
--   [Claims update](#Claims-update)
--   [SignIn manager errata](#SignIn-manager-errata)
--   [Profile](#Profile)
--	[Solidify our code](#Solidify-our-code)
--   [Manage claims](#Manage-claims)
+	- [Seeding](#Seeding)
+	- [Policy setup](#Policy-setup)
+	- [Claims update](#Claims-update)
+	- [SignIn manager errata](#SignIn-manager-errata)
+	- [Profile](#Profile)
+	- [Solidify our code](#Solidify-our-code)
+	-[Manage claims](#Manage-claims)
 
 ## Preface
 
