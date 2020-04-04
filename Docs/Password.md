@@ -11,14 +11,14 @@
 -   [IdentityErrorDescriber](#IdentityErrorDescriber)
 -	[Setup](#Setup)
 
-##Preface
+## Preface
 
 Now that we have some easy understanding of what is happening with claims policies and so on, it's time that we make better use of Identity. Let's explore and further use it's implementation.
 
-###Work done
+### Work done
 
 ### SignInManager
-We completely changed the SignInManager in order to use its true implementation with the context signin. At the preceding section, to signin we used our implementation of 
+We completely changed the SignInManager in order to use its true implementation with the context signin. At the preceding chapter, to signin we used our implementation of 
 signing that called the base classe's method to sign in and then we called our method UpdateContextAsync to set the Identity at context user.
 
 Now we are going take a look at the base implementation of [SignInManager](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Core/src/SignInManager.cs) to improve ours.
@@ -50,14 +50,14 @@ public virtual async Task SignInWithClaimsAsync(TUser user, AuthenticationProper
 }
 ```
 
-So instead of setting the context User we user its sing in methods. Of course, we need to user the scheme name so there wouldn’t be any sing in at all. Luckily [IdentityConstants](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Core/src/IdentityConstants.cs)
+So instead of setting the Context User we user its sing in methods. Of course, we need to user the scheme name so there wouldn’t be any sing in at all. Luckily [IdentityConstants](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Core/src/IdentityConstants.cs)
 provides us with the applicationscheme of its own setting at [IdentityServiceCollectionExtensions](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Core/src/IdentityServiceCollectionExtensions.cs)
 
-So effectively all is set for you at AddIndentity() and it’s not configurable for you any more, even the redirect path to login!!!
+So effectively all is set for you at AddIndentity() and it’s not configurable for you anymore, even the redirect path to login!!!
 
 ### UserManager
 
-We implemented the check password a user manager taking example in [UserManager](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Core/src/UserManager.cs) 
+We implemented the check password at user manager taking example of [UserManager](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Core/src/UserManager.cs) 
 at Identity/Extensions.Core where at line about 700 you can observe the following method
 ```
 public virtual async Task<bool> CheckPasswordAsync(TUser user, string password)
@@ -112,8 +112,8 @@ private IUserPasswordStore<TUser> GetPasswordStore()
 }
 ```
 ### UserStore
-We added the normalized name to make it easier to find use but if we observe the source code we get form the base class [UserStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/UserStoreBase.cs)
-at Identity/Extensions.Stores it implements all the interfaces
+We added the normalized name to make it easier to find user but if we observe the source code from the base class [UserStoreBase](https://github.com/dotnet/aspnetcore/blob/master/src/Identity/Extensions.Stores/src/UserStoreBase.cs)
+at Identity/Extensions.Stores it implements all the interfaces.
 ```
 public abstract class UserStoreBase<TUser, TKey, TUserClaim, TUserLogin, TUserToken> :
         IUserLoginStore<TUser>,
@@ -134,7 +134,7 @@ public abstract class UserStoreBase<TUser, TKey, TUserClaim, TUserLogin, TUserTo
         where TUserLogin : IdentityUserLogin<TKey>, new()
         where TUserToken : IdentityUserToken<TKey>, new()
 ```
-And that’s the casting mentioned at the previous section happens.
+Implementing IUserPasswordStore<TUser> makes possible the casting mentioned at the previous section happens.
 As seen here now our Password becomes PasswordHash at EasyUser in order to implement IUserPasswrodStore for EasyUserStore.
 We also implemented IUserPasswordStore so we again can hash password [EasyUserStore](/src/Ambseny.WebAplication/Data/User/EasyUserStore.cs)
 
@@ -142,7 +142,8 @@ We also implemented IUserPasswordStore so we again can hash password [EasyUserSt
 Since now we use the default asp net core Identity Password Hasher, we adapted at [Program](/src/Ambseny.WebAplication/Program.cs) the Seed() method accordingly to have functioning password
 
 ### IdentityErrorDescriber
-Just to avoid littering everything with error codes and despcriptions, we created a [AmbsenyIdentityErrorDescriber](/src/Ambseny.WebAplication/Data/AmbsenyIdentityErrorDescriber.cs) class to add on the existing ones
+Just to avoid littering everything with error codes and despcriptions, we created a [AmbsenyIdentityErrorDescriber](/src/Ambseny.WebAplication/Data/AmbsenyIdentityErrorDescriber.cs) 
+class to add on the existing describers.
 
 ### Setup
 
