@@ -1,4 +1,4 @@
-#Password
+# Claims store
 
 ## Table of content
 
