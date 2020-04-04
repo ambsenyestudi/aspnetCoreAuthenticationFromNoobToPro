@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -43,6 +44,18 @@ namespace Ambseny.WebAplication.Data.User
                 return result != PasswordVerificationResult.Failed;
             }
             return false;
+        }
+        public override Task<IdentityResult> AddClaimAsync(EasyUser user, Claim claim)
+        {
+            return base.AddClaimAsync(user, claim);
+        }
+        public override Task<IdentityResult> AddClaimsAsync(EasyUser user, IEnumerable<Claim> claims)
+        {
+            return base.AddClaimsAsync(user, claims);
+        }
+        public override Task<IList<Claim>> GetClaimsAsync(EasyUser user)
+        {
+            return base.GetClaimsAsync(user);
         }
     }
 }

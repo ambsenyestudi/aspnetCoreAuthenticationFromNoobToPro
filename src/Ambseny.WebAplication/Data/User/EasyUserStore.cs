@@ -2,6 +2,7 @@
 using Ambseny.WebAplication.Models.Users;
 using Microsoft.AspNetCore.Identity;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading;
@@ -9,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ambseny.WebAplication.Data.User
 {
-    public class EasyUserStore : IUserStore<EasyUser>, IUserPasswordStore<EasyUser>
+    public class EasyUserStore : IUserStore<EasyUser>, IUserPasswordStore<EasyUser>, IUserClaimStore<EasyUser>
     {
         private readonly EasyUserDbContext dbContext;
         private readonly AmbsenyIdentityErrorDescriber errorDescriber;
@@ -19,6 +20,23 @@ namespace Ambseny.WebAplication.Data.User
             this.dbContext = dbContext;
             this.errorDescriber = errorDescriber;
         }
+
+        public async Task AddClaimsAsync(EasyUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            var validatedUser = await ProcessUserValidationAsync(user, cancellationToken);
+
+            var newClaimCollection = claims.Select(x => new UserClaim
+            {
+                ClaimType = x.Type,
+                ClaimValue = x.Value,
+                Id = Guid.NewGuid(),
+                UserId = validatedUser.Id
+            });
+            await dbContext.UserClaims.AddRangeAsync(newClaimCollection);
+            await dbContext.SaveChangesAsync();
+
+        }
+
         public async Task<IdentityResult> CreateAsync(EasyUser user, CancellationToken cancellationToken)
         {
             if (!dbContext.Users.Any(x => x.NormalizedName == user.NormalizedName))
@@ -41,8 +59,6 @@ namespace Ambseny.WebAplication.Data.User
                 }
                 
                 return IdentityResult.Failed(errorDescriber.UnableToPersistNewUser(user.Name));
-                
-
             }
            
             return IdentityResult.Failed(errorDescriber.InvalidUserName(user.Name)); 
@@ -89,6 +105,16 @@ namespace Ambseny.WebAplication.Data.User
                 .Where(x => x.NormalizedName == normalizedUserName)
                 .FirstOrDefault());
 
+        public async Task<IList<Claim>> GetClaimsAsync(EasyUser user, CancellationToken cancellationToken)
+        {
+            var validatedUser = await ProcessUserValidationAsync(user, cancellationToken);
+
+            return dbContext.UserClaims
+                .Where(x => x.UserId == user.Id)
+                .Select(x => new Claim(x.ClaimType, x.ClaimValue))
+                .ToList();
+        }
+
         public Task<string> GetNormalizedUserNameAsync(EasyUser user, CancellationToken cancellationToken) =>
             Task.FromResult(user.NormalizedName);
 
@@ -116,15 +142,40 @@ namespace Ambseny.WebAplication.Data.User
         public Task<string> GetUserNameAsync(EasyUser user, CancellationToken cancellationToken) =>
             Task.FromResult(user.Name);
 
+        public Task<IList<EasyUser>> GetUsersForClaimAsync(Claim claim, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
         public Task<bool> HasPasswordAsync(EasyUser user, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }
 
+        public Task RemoveClaimsAsync(EasyUser user, IEnumerable<Claim> claims, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task ReplaceClaimAsync(EasyUser user, Claim claim, Claim newClaim, CancellationToken cancellationToken)
+        {
+
+            var userClaimCollection = dbContext.UserClaims.Where(x => x.UserId.ToString() == user.Id).AsEnumerable();
+            var oldClaim = userClaimCollection.Where(x => x.ClaimType == claim.Type).FirstOrDefault();
+            if(oldClaim!=null)
+            {
+                oldClaim.ClaimType = newClaim.Type;
+                oldClaim.ClaimValue = newClaim.Value;
+                dbContext.UserClaims.Update(oldClaim);
+                await dbContext.SaveChangesAsync();
+            }
+            
+        }
+
         public Task SetNormalizedUserNameAsync(EasyUser user, string normalizedName, CancellationToken cancellationToken) =>
             Task.FromResult(user.NormalizedName = normalizedName);
 
-        public async Task SetPasswordHashAsync(EasyUser user, string passwordHash, CancellationToken cancellationToken) =>
+        public Task SetPasswordHashAsync(EasyUser user, string passwordHash, CancellationToken cancellationToken) =>
             Task.FromResult(user.PasswordHash = passwordHash);
 
         public Task SetUserNameAsync(EasyUser user, string userName, CancellationToken cancellationToken) =>
@@ -145,6 +196,24 @@ namespace Ambseny.WebAplication.Data.User
             var des = new AmbsenyIdentityErrorDescriber();
             return IdentityResult.Failed(des.UnableToPersistNewUser(user.NormalizedName));
         }
+        private async Task<EasyUser> ProcessUserValidationAsync(EasyUser user, CancellationToken cancellationToken)
+        {
+            if (!IsValidUser(user))
+            {
+                var normalizedName = await GetNormalizedUserNameAsync(user, cancellationToken);
+                var validatedUser = await FindByNameAsync(normalizedName, cancellationToken);
+                return validatedUser;
+            }
+            return user;
+        }
+
+        private bool IsValidUser(EasyUser user)
+        {
+            var isUser = dbContext.Users.Any(x => x == user);
+            return isUser;
+        }
+
+
         
     }
 }

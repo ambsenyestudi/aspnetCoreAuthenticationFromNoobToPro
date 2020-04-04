@@ -1,22 +1,23 @@
 ﻿using Ambseny.WebAplication.Data;
 using Ambseny.WebAplication.Models.Users;
-using Ambseny.WebAplication.Services.Claims;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Ambseny.WebAplication.Services.Users
 {
     public class UsersService : IUsersService
     {
         private readonly EasyUserDbContext dbContext;
-        private readonly IClaimsService claimsService;
+        private readonly UserManager<EasyUser> userManager;
 
-        public UsersService(EasyUserDbContext dbContext, IClaimsService claimsService)
+        public UsersService(EasyUserDbContext dbContext, UserManager<EasyUser> userManager)
         {
             this.dbContext = dbContext;
-            this.claimsService = claimsService;
+            this.userManager = userManager;
         }
         public IEnumerable<EasyUserProfile> GetAllUserProfile()
         {
@@ -27,11 +28,13 @@ namespace Ambseny.WebAplication.Services.Users
         private EasyUserProfile ToUserProfile(EasyUser user)
         {
             var manageUserClaim = AmbsenyManageUserClaims.None;
-            if (claimsService.TryGetClaimByUserId(user.Id, AmbsenyClaimTypes.ManageUsers.ToString(), out UserClaim claim))
+            var userClaimCollection = userManager.GetClaimsAsync(user).Result.Where(x => x.Type == AmbsenyClaimTypes.ManageUsers.ToString());
+            if (userClaimCollection.Any())
             {
-                if (Enum.IsDefined(typeof(AmbsenyManageUserClaims), claim.ClaimValue))
+                var claimValue = userClaimCollection.First().Value;
+                if (Enum.IsDefined(typeof(AmbsenyManageUserClaims), claimValue))
                 {
-                    manageUserClaim = (AmbsenyManageUserClaims)Enum.Parse(typeof(AmbsenyManageUserClaims), claim.ClaimValue);
+                    manageUserClaim = (AmbsenyManageUserClaims)Enum.Parse(typeof(AmbsenyManageUserClaims), claimValue);
                 }
             }
 
@@ -43,9 +46,10 @@ namespace Ambseny.WebAplication.Services.Users
             };
         }
 
-        public EasyUserProfile GetUserProfile(string sid)
+        public async Task<EasyUserProfile> GetUserProfileAsync(string sid)
         {
-            if (TryGetUserById(sid, out EasyUser user))
+            (var success, var user) = await TryGetUserByIdAsync(sid);
+            if (success)
             {
                 return ToUserProfile(user);
             }
@@ -53,18 +57,34 @@ namespace Ambseny.WebAplication.Services.Users
         }
 
 
-        public bool DeleteUser(string id)
+        public async Task<bool> DeleteUserAsync(string id)
         {
+            var user = await userManager.FindByIdAsync(id);
+            var result = await userManager.DeleteAsync(user);
+            return result.Succeeded;
+            /*
             if (TryGetUserById(id, out EasyUser user))
             {
                 dbContext.Remove(user);
                 return dbContext.SaveChanges() > 0;
             }
             return false;
+            */
         }
 
-        public bool UpdateClaims(string id, Claim claim)
+        public async Task<bool> UpdateClaimsAsync(string id, Claim claim)
         {
+            var user = await userManager.FindByIdAsync(id);
+            var userClaimCollection = await userManager.GetClaimsAsync(user);
+            var oldClaim = userClaimCollection.Where(x => x.Type == claim.Type).FirstOrDefault();
+            if(oldClaim!=null)
+            {
+                var result = await userManager.ReplaceClaimAsync(user, oldClaim, claim);
+                return result.Succeeded; 
+            }
+            return false;
+            
+            /*
             if(claimsService.TryGetClaimByUserId(id, claim.Type, out UserClaim userClaim))
             {
                 return claimsService.UpdateExistingClaim(id, claim);
@@ -73,20 +93,12 @@ namespace Ambseny.WebAplication.Services.Users
             {
                 return claimsService.CreateNewClaim(id, claim);
             }
+            */
         }
-        public bool TryGetUserById(string id, out EasyUser user)
+        public async Task<(bool, EasyUser)> TryGetUserByIdAsync(string id)
         {
-            var matches = dbContext.Users.Where(x => x.Id == id);
-            var success = matches.Any();
-            if (success)
-            {
-                user = matches.First();
-            }
-            else
-            {
-                user = null;
-            }
-            return success;
+            var user = await userManager.FindByIdAsync(id);
+            return (user != null, user);
         }
         
     }

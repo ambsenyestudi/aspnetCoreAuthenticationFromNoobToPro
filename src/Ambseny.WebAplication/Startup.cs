@@ -1,22 +1,16 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 using Ambseny.WebAplication.Data;
 using Ambseny.WebAplication.Data.User;
 using Ambseny.WebAplication.Models.Users;
-using Ambseny.WebAplication.Services.Claims;
 using Ambseny.WebAplication.Services.Users;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Security.Claims;
 
 namespace Ambseny.WebAplication
 {
@@ -46,7 +40,6 @@ namespace Ambseny.WebAplication
             services.AddTransient<PasswordHasher<EasyUser>>();
 
             services.AddTransient<IUsersService, UsersService>();
-            services.AddTransient<IClaimsService, ClaimsService>();
 
             services.AddIdentity<EasyUser, IdentityRole>(config => {
                 //just for the sake of rapid testing

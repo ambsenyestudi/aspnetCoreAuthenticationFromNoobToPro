@@ -1,14 +1,15 @@
 ﻿using Ambseny.WebAplication.Models.Users;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Ambseny.WebAplication.Services.Users
 {
     public interface IUsersService
     {
         IEnumerable<EasyUserProfile> GetAllUserProfile();
-        EasyUserProfile GetUserProfile(string sid);
-        bool DeleteUser(string id);
-        bool UpdateClaims(string id, Claim claim);
+        Task<EasyUserProfile> GetUserProfileAsync(string sid);
+        Task<bool> DeleteUserAsync(string id);
+        Task<bool> UpdateClaimsAsync(string id, Claim claim);
     }
 }

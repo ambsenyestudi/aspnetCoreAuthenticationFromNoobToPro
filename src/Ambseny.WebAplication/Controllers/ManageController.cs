@@ -3,6 +3,7 @@ using Ambseny.WebAplication.Services.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Ambseny.WebAplication.Controllers
 {
@@ -22,28 +23,35 @@ namespace Ambseny.WebAplication.Controllers
             return View(profiles);
         }
         [Authorize(Policy = "UserEditor")]
-        [HttpGet]
-        public IActionResult Edit(string id)
+        [HttpGet("Edit")]
+        public async Task<IActionResult> EditAsync(string id)
         {
-            var profile = usersService.GetUserProfile(id);
+            var profile = await usersService.GetUserProfileAsync(id);
             return View(profile);
         }
         [Authorize(Policy = "UserEditor")]
-        [HttpPost]
-        public IActionResult Edit(EasyUserProfile profile)
+        [HttpPost("Edit")]
+        public async Task<IActionResult> EditAsync(EasyUserProfile profile)
         {
             var claim = new Claim(AmbsenyClaimTypes.ManageUsers.ToString(), profile.ManageUserValue.ToString());
-            var result = usersService.UpdateClaims(profile.Id, claim);
+            var result = await usersService.UpdateClaimsAsync(profile.Id, claim);
+            //todo show some type of error if fails
             return Redirect("/Manage/Index");
+            
         }
 
         [Authorize(Policy = "UserAdministrator")]
-        public IActionResult Delete(string id)
+        [HttpGet("Delete")]
+        public async Task<IActionResult> DeleteAsync(string id)
         {
             if(!string.IsNullOrWhiteSpace(id))
             {
-                usersService.DeleteUser(id);
+                if(await usersService.DeleteUserAsync(id))
+                {
+                    //todo show some type of error if fails
+                }
             }
+
             
             return Redirect("/Manage/Index");
         }

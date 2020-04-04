@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Ambseny.WebAplication.Controllers
 {
@@ -13,14 +14,14 @@ namespace Ambseny.WebAplication.Controllers
         {
             this.usersService = usersService;
         }
-        public IActionResult Index(string id)
+        public async Task<IActionResult> Index(string id)
         {
             var sid = id;
             if(string.IsNullOrWhiteSpace(sid))
             {
                 sid = User.Claims.Where(x => x.Type == ClaimTypes.Sid).Select(x=>x.Value).FirstOrDefault();
             }
-            var userProfile = usersService.GetUserProfile(sid);
+            var userProfile = await usersService.GetUserProfileAsync(sid);
             return View(userProfile);
         }
     }
