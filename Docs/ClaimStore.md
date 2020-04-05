@@ -42,4 +42,4 @@ Now it implements IUserClaimStore<EasyUser> so [EasyUserStore](/src/Ambseny.WebA
 
 ### UserServices
 Now [UsersService](/src/Ambseny.WebAplication/Services/Users/UsersService.cs) has as an injected dependecy EasyUserManager insted of IClaimsServices.
-Basic refactor that now is more ASP Net Core compliante.
+Basic refactor that now is more ASP Net Core compliant.
