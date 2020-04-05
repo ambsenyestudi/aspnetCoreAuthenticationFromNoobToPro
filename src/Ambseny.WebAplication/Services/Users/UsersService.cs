@@ -62,14 +62,6 @@ namespace Ambseny.WebAplication.Services.Users
             var user = await userManager.FindByIdAsync(id);
             var result = await userManager.DeleteAsync(user);
             return result.Succeeded;
-            /*
-            if (TryGetUserById(id, out EasyUser user))
-            {
-                dbContext.Remove(user);
-                return dbContext.SaveChanges() > 0;
-            }
-            return false;
-            */
         }
 
         public async Task<bool> UpdateClaimsAsync(string id, Claim claim)
@@ -83,17 +75,6 @@ namespace Ambseny.WebAplication.Services.Users
                 return result.Succeeded; 
             }
             return false;
-            
-            /*
-            if(claimsService.TryGetClaimByUserId(id, claim.Type, out UserClaim userClaim))
-            {
-                return claimsService.UpdateExistingClaim(id, claim);
-            }
-            else
-            {
-                return claimsService.CreateNewClaim(id, claim);
-            }
-            */
         }
         public async Task<(bool, EasyUser)> TryGetUserByIdAsync(string id)
         {
