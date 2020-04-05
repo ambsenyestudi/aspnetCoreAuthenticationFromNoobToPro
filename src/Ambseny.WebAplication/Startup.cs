@@ -1,7 +1,10 @@
 using Ambseny.WebAplication.Data;
 using Ambseny.WebAplication.Data.User;
+using Ambseny.WebAplication.IdentityServer.Stores;
+using Ambseny.WebAplication.Models.Options;
 using Ambseny.WebAplication.Models.Users;
 using Ambseny.WebAplication.Services.Users;
+using IdentityServer4.Stores;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,7 +42,11 @@ namespace Ambseny.WebAplication
             services.AddTransient<AmbsenyIdentityErrorDescriber>();
             services.AddTransient<PasswordHasher<EasyUser>>();
 
+            var ots = Configuration.GetSection("IdentityClientConfig");
+            services.Configure<IdentityClientOptions>(ots);
             services.AddTransient<IUsersService, UsersService>();
+            services.AddSingleton<IClientStore, CustomClientStore>();
+            services.AddSingleton<IResourceStore, CustomResourceStore>();
 
             services.AddIdentity<EasyUser, IdentityRole>(config => {
                 //just for the sake of rapid testing
@@ -54,15 +61,7 @@ namespace Ambseny.WebAplication
                 .AddErrorDescriber<AmbsenyIdentityErrorDescriber>()
                 .AddClaimsPrincipalFactory<EasyUserClaimsPrincipalFactory>();
 
-            //all of the following is redundant (check Password.md)
-            services.AddAuthentication(config => 
-            {
-                config.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-                .AddCookie(config => {
-                    config.Cookie.Name = "IdentityAutheticate.Cookie";
-                    config.LoginPath = "/Account/Login";
-                });
+            
 
             services.AddAuthorization(options =>
             {
@@ -82,6 +81,11 @@ namespace Ambseny.WebAplication
                 );
                 options.AddPolicy("UserAdministrator", policy => policy.RequireClaim(AmbsenyClaimTypes.ManageUsers.ToString(), AmbsenyManageUserClaims.Administrate.ToString()));
             });
+
+            services.AddIdentityServer()
+                .AddClientStore<CustomClientStore>()
+                .AddResourceStore<CustomResourceStore>()
+                .AddAspNetIdentity<EasyUser>().AddDeveloperSigningCredential(); 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -104,6 +108,9 @@ namespace Ambseny.WebAplication
 
             app.UseAuthentication();
             app.UseAuthorization();
+            //app.UserIdentity();
+            app.UseIdentityServer();
+
 
             app.UseEndpoints(endpoints =>
             {

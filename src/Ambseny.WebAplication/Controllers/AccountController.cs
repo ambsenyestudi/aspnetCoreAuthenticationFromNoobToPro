@@ -17,9 +17,9 @@ namespace Ambseny.WebAplication.Controllers
             this.userManager = userManager;
         }
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult Login(string returnUrl)
         {
-            return View(new LoginEasyUser());
+            return View(new LoginEasyUser() { ReturnUrl = returnUrl});
         }
         [HttpPost]
         public async Task<IActionResult> Login(LoginEasyUser user)
@@ -28,7 +28,12 @@ namespace Ambseny.WebAplication.Controllers
             var signinResult = await signInManager.PasswordSignInAsync(user.Name.ToUpper(), user.Password, false, false);
             if (signinResult.Succeeded)
             {
-                return Redirect("/Home");
+                if(string.IsNullOrWhiteSpace(user.ReturnUrl))
+                {
+                    return Redirect("/Home");
+                }
+                return Redirect(user.ReturnUrl);
+                
             }
             else
             {
