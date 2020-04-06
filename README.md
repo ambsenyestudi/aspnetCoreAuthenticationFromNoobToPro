@@ -103,5 +103,11 @@ Let's implement our password checking better. This means hashing and verifying y
 
 Let's use the tools of Identity to refactor our code to implement [ClaimStore](Docs/ClaimStore.md)
 
+### Resources and Clients
+
+take a look at this
+https://blog.codingmilitia.com/2019/06/22/aspnet-024-from-zero-to-overkill-integrating-identityserver4-part4-back-for-front
+
+
 
 
